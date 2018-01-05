@@ -13,6 +13,7 @@ init
 {
 	vars.room_olga	= "w00b";
 	vars.room_fatm = "w20c";
+	
 	vars.boss = false;
 }
 
