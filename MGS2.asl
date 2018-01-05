@@ -13,7 +13,7 @@ init
 {
 	vars.room_olga	= "w00b";
 	vars.room_fatm = "w20c";
-	
+
 	vars.boss = false;
 }
 
@@ -34,13 +34,13 @@ split
 {
 
 	// Room check
-	if (current.ROOM == vars.room_olga && current.OLGA_ST == 128) 
+	if (current.ROOM == vars.room_olga && current.OLGA_ST > 1) 
 	{
 		vars.boss = true;
 	} 
 	
 	// 2bytes need to be converted.
-	if (current.ROOM == vars.room_fatm && (BitConverter.ToInt16(current.FATM_HP, 0) == 256 && current.FATM_ST == 256)) 
+	if (current.ROOM == vars.room_fatm && (BitConverter.ToInt16(current.FATM_HP, 0) > 1 && current.FATM_ST > 1)) 
 	{
 		vars.boss = true;
 	}
