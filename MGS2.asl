@@ -35,8 +35,18 @@ init
 	vars.hold_2 = "w04b";
 	vars.hold_3 = "w04c";
 
-	// Plant rooms...
-
+	// Tanker exceptions...
+	vars.scn_1 = "d00t";
+	vars.scn_2 = "d01t";
+	vars.scn_3 = "d04t";
+	vars.scn_4 = "d05t";
+	vars.scn_5 = "d10t";
+	vars.scn_6 = "d11t";
+	vars.scn_7 = "d12t";
+	vars.scn_8 = "d12t3";
+	vars.scn_9 = "d12t4";
+	vars.scn_10 = "d13t";
+	vars.scn_11 = "d14t";
 }
 
 start
@@ -54,6 +64,20 @@ exit
 
 split
 {
+	if (current.ROOM != old.ROOM) {
+		if (current.ROOM != vars.scn_1) return true;
+		if (current.ROOM != vars.scn_2) return true;
+		if (current.ROOM != vars.scn_3) return true;
+		if (current.ROOM != vars.scn_4) return true;
+		if (current.ROOM != vars.scn_5) return true;
+		if (current.ROOM != vars.scn_6) return true;
+		if (current.ROOM != vars.scn_7) return true;
+		if (current.ROOM != vars.scn_8) return true;
+		if (current.ROOM != vars.scn_9) return true;
+		if (current.ROOM != vars.scn_10) return true;
+		if (current.ROOM != vars.scn_11) return true;
+	}
+
 	// Room checks
 	if (current.ROOM == vars.room_olga && current.OLGA_ST > 1) 
 	{
