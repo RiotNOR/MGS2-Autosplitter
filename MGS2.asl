@@ -287,7 +287,7 @@ split
 			if (settings["tanker_w00c"] && room == "w00c") vars.isRoom = true;
 			if (settings["tanker_w01a"] && room == "w01a") vars.isRoom = true;
 			if (settings["tanker_w01b"] && room == "w01b") vars.isRoom = true;
-			if (settings["tanker_w01b"] && room == "w01b") vars.isRoom = true;
+			if (settings["tanker_w01c"] && room == "w01c") vars.isRoom = true;
 			if (settings["tanker_w01d"] && room == "w01d") vars.isRoom = true;
 			if (settings["tanker_w01e"] && room == "w01e") vars.isRoom = true;
 			if (settings["tanker_w01f"] && room == "w01f") vars.isRoom = true;
