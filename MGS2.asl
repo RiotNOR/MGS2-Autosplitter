@@ -247,6 +247,8 @@ split
 	bool enablePlantSplitRooms = settings["plant_split_rooms"];
 
 	string room = current.ROOM;
+
+	// Needed for linq
 	string[] menu = vars.menus;
 	string[] tanker = vars.tankerRooms;
 	string[] tankerBosses = vars.tankerBosses;
@@ -257,7 +259,7 @@ split
 
 	if (enableTanker)
 	{
-		if (enableTankerSplitBoss && tankerBosses.Any(room.Contains))
+		if (enableTankerSplitBoss && enableTankerSplitRooms == false && tankerBosses.Any(room.Contains))
 		{
 			if (current.OLGA_ST > 1) 
 			{
