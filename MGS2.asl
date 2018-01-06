@@ -343,8 +343,8 @@ split
 		}
 		else if (enablePlantSplitRooms && plant.Any(room.Contains))
 		{
-			if (room != old.ROOM) {
-				if (settings["tanker_split_w00a"] && room == "w00a") vars.isSplitting = true;
+			if (room != old.ROOM && !plantCutscenes.Any(oldRoom.Contains)) {
+				vars.isSplitting = true
 			}
 		}
 	}
