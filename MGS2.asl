@@ -280,13 +280,13 @@ split
 		
 		if (enableTankerSplitRooms && tanker.Any(room.Contains))
 		{
-			if (room != old.ROOM && !tankerCutscenes.Any(oldRoom.Contains)) {
+			if (room != oldRoom && !tankerCutscenes.Any(oldRoom.Contains)) {
 				vars.isSplitting = true;
 			}
 		} 
 		else if (enableTankerSplitSpecific) 
 		{
-			if (!tankerCutscenes.Any(oldRoom.Contains)) {
+			if (room != oldRoom && !tankerCutscenes.Any(oldRoom.Contains)) {
 				if (settings["tanker_w00a"] && room == "w00a") vars.isRoom = true;
 				if (settings["tanker_w00b"] && room == "w00b") vars.isRoom = true;
 				if (settings["tanker_w00c"] && room == "w00c") vars.isRoom = true;
