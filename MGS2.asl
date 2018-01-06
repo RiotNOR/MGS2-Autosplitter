@@ -277,21 +277,30 @@ split
 		else if (enableTankerSplitRooms && tanker.Any(room.Contains))
 		{
 			if (room != old.ROOM) {
-				if (settings["tanker_w00a"] && room == "w00a") vars.isSplitting = true;
-				if (settings["tanker_w00b"] && room == "w00b") vars.isSplitting = true;
-				if (settings["tanker_w00c"] && room == "w00c") vars.isSplitting = true;
-				if (settings["tanker_w01a"] && room == "w01a") vars.isSplitting = true;
-				if (settings["tanker_w01b"] && room == "w01b") vars.isSplitting = true;
-				if (settings["tanker_w01b"] && room == "w01b") vars.isSplitting = true;
-				if (settings["tanker_w01d"] && room == "w01d") vars.isSplitting = true;
-				if (settings["tanker_w01e"] && room == "w01e") vars.isSplitting = true;
-				if (settings["tanker_w01f"] && room == "w01f") vars.isSplitting = true;
-				if (settings["tanker_w02a"] && room == "w02a") vars.isSplitting = true;
-				if (settings["tanker_w03a"] && room == "w03a") vars.isSplitting = true;
-				if (settings["tanker_w03b"] && room == "w03b") vars.isSplitting = true;
-				if (settings["tanker_w04a"] && room == "w04a") vars.isSplitting = true;
-				if (settings["tanker_w04b"] && room == "w04b") vars.isSplitting = true;
-				if (settings["tanker_w04c"] && room == "w04c") vars.isSplitting = true;
+				vars.isSplitting = true;
+			}
+		} 
+		else if (enableTankerSplitSpecific) 
+		{
+			if (settings["tanker_w00a"] && room == "w00a") vars.isRoom = true;
+			if (settings["tanker_w00b"] && room == "w00b") vars.isRoom = true;
+			if (settings["tanker_w00c"] && room == "w00c") vars.isRoom = true;
+			if (settings["tanker_w01a"] && room == "w01a") vars.isRoom = true;
+			if (settings["tanker_w01b"] && room == "w01b") vars.isRoom = true;
+			if (settings["tanker_w01b"] && room == "w01b") vars.isRoom = true;
+			if (settings["tanker_w01d"] && room == "w01d") vars.isRoom = true;
+			if (settings["tanker_w01e"] && room == "w01e") vars.isRoom = true;
+			if (settings["tanker_w01f"] && room == "w01f") vars.isRoom = true;
+			if (settings["tanker_w02a"] && room == "w02a") vars.isRoom = true;
+			if (settings["tanker_w03a"] && room == "w03a") vars.isRoom = true;
+			if (settings["tanker_w03b"] && room == "w03b") vars.isRoom = true;
+			if (settings["tanker_w04a"] && room == "w04a") vars.isRoom = true;
+			if (settings["tanker_w04b"] && room == "w04b") vars.isRoom = true;
+			if (settings["tanker_w04c"] && room == "w04c") vars.isRoom = true;
+
+			if (room != old.ROOM && vars.isRoom) {
+				vars.isRoom = false;
+				vars.isSplitting = true;
 			}
 		}
 	}
