@@ -304,7 +304,7 @@ split
 				if (settings["tanker_w04c"] && room == "w04c") vars.isRoom = true;
 			}
 
-			if (room != old.ROOM && vars.isRoom) {
+			if (room != oldRoom && vars.isRoom) {
 				vars.isRoom = false;
 				vars.isSplitting = true;
 			}
@@ -343,7 +343,7 @@ split
 		}
 		else if (enablePlantSplitRooms && plant.Any(room.Contains))
 		{
-			if (room != old.ROOM && !plantCutscenes.Any(oldRoom.Contains)) {
+			if (room != oldRoom && !plantCutscenes.Any(oldRoom.Contains)) {
 				vars.isSplitting = true
 			}
 		}
