@@ -257,6 +257,7 @@ split
 
 	string[] plant = vars.plantRooms;
 	string[] plantBosses = vars.plantBosses;
+	string[] plantCutscenes = vars.plantCutscenes;
 
 	// print(settings["tanker_split_rooms_alt_deck"].ToString());
 
@@ -344,7 +345,7 @@ split
 		else if (enablePlantSplitRooms && plant.Any(room.Contains))
 		{
 			if (room != oldRoom && !plantCutscenes.Any(oldRoom.Contains)) {
-				vars.isSplitting = true
+				vars.isSplitting = true;
 			}
 		}
 	}
