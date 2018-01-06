@@ -284,7 +284,8 @@ split
 				vars.isSplitting = true;
 			}
 		} 
-		else if (enableTankerSplitSpecific) 
+		
+		if (enableTankerSplitSpecific) 
 		{
 			if (!tankerCutscenes.Any(oldRoom.Contains)) {
 				if (settings["tanker_w00a"] && room == "w00a") vars.isRoom = true;
