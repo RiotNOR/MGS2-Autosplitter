@@ -392,7 +392,7 @@ split
 	if (enableTanker)
 	{
 		
-		if (enableTankerSplitBoss && tankerBosses.Any (room.Contains))
+		if (enableTankerSplitBoss && tankerBosses.Any (room.Contains) && !tankerCutscenes.Any(oldRoom.Contains))
 		{
 			if (current.OLGA_ST > 1)
 			{
