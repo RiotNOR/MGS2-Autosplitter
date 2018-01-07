@@ -515,15 +515,16 @@ split
 
 					break;
 				case "w46a":
-					if (current.MANTA_HP > 1) 
-					{
-						vars.isBoss = true;
-					}
-					if (vars.isBoss && (current.MANTA_HP == 0))
-					{
-						vars.isBoss = false;
-						vars.isSplitting = true;
-					}
+					// Removed in favor of cutscene exception
+					// if (current.MANTA_HP > 1) 
+					// {
+					// 	vars.isBoss = true;
+					// }
+					// if (vars.isBoss && (current.MANTA_HP == 0))
+					// {
+					// 	vars.isBoss = false;
+					// 	vars.isSplitting = true;
+					// }
 					break;
 				case "w61a":
 					if (current.SOLI_HP > 1 && current.SOLI_ST > 1) 
@@ -604,6 +605,10 @@ split
 					case "d012p01":
 						vars.isRoom = true;
 						break;
+
+					case "d080p01":
+						vars.isRoom = true;
+						break;
 				}
 			}
 
@@ -615,7 +620,7 @@ split
 		}
 	}
 
-	if (vars.isSplitting)
+	if (vars.isSplitting && !menu.Any(oldRoom.Contains))
 	{
 		print ("Split on: " + current.ROOM + " -- Previous room: " + old.ROOM);
 		vars.isSplitting = false;
