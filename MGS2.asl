@@ -366,7 +366,7 @@ split
 		}
 		else if (Array.IndexOf(plant, current.ROOM) != -1)
 		{
-			vars.currentRoomName = vars.plantRoomNames[Array.IndexOf(tanker, current.ROOM)];
+			vars.currentRoomName = vars.plantRoomNames[Array.IndexOf(plant, current.ROOM)];
 		}
 
 		vars.currentRoomValue = current.ROOM;
