@@ -5,11 +5,22 @@ state ("mgs2_sse")
 
 	// 2 bytes need to be byte2, 4 can be int
 	int OLGA_ST: "mgs2_sse.exe", 0xAD4F6C, 0x0, 0x1E0, 0x44, 0x1F8, 0x13C;
+
 	byte2 FATM_HP: "mgs2_sse.exe", 0xB6DEC4, 0x24E;
 	int FATM_ST: "mgs2_sse.exe", 0x664E78, 0x88;
+
 	byte2 HARR_HP: "mgs2_sse.exe", 0x619BB0, 0x5C;
+
 	byte2 VAMP_ST: "mgs2_sse.exe", 0x664EA0, 0x15A;
 	byte2 VAMP_HP: "mgs2_sse.exe", 0x664EA0, 0x158;
+
+	byte SOLI_HP: "mgs2_sse.exe", 0x664E7C, 0xB8;
+	byte SOLI_ST: "mgs2_sse.exe", 0x664E78, 0xC8;
+
+	byte VAMP2_HP: "mgs2_sse.exe", 0xB6DECC, 0x23E;
+	byte VAMP2_ST: "mgs2_sse.exe", 0xB75754, 0x344, 0x540, 0x7E0, 0x88, 0xCE;
+
+	byte MANTA_HP: "mgs2_sse.exe", 0xAD4EA4, 0x54, 0x10, 0x10, 0x170, 0x7E0;
 }
 
 startup
@@ -173,7 +184,12 @@ init
 
 	vars.plantBosses = new string[]
 	{
-		"w31c" // Vamp
+		"w20c", // Fatman
+		"w25a", // Harrier
+		"w31c", // Vamp
+		"w32b", // Vamp 2
+		"w46a", // Mantas
+		"w61a" // Snake
 	};
 
 	vars.plantRooms = new string[]
@@ -445,58 +461,60 @@ split
 	{
 		if (enablePlantSplitBoss && plantBosses.Any (room.Contains))
 		{
-			// Could need a safety check for room
-			if (BitConverter.ToInt16 (current.FATM_HP, 0) > 1)
+			switch (room)
 			{
-				vars.isBoss = true;
-				vars.currentBoss = "fatman";
-			}
-			else if (current.HARR_HP > 1)
-			{
-				vars.isBoss = true;
-				vars.currentBoss = "harrier";
-			}
-			else if (BitConverter.ToInt16 (current.VAMP_HP, 0) > 1)
-			{
-				vars.isBoss = true;
-				vars.currentBoss = "vamp";
-			}
+				case "w20c":
+					if (BitConverter.ToInt16(current.FATM_HP, 0) > 1) vars.isBoss = true;
+					if (vars.isBoss && (BitConverter.ToInt16(current.FATM_HP, 0) == 0 || current.FATM_ST == 0))
+					{
+						vars.isBoss = false;
+						vars.isSplitting = true;
+					}
 
-			if (vars.isBoss == true)
-			{
-				switch (tempBoss)
-				{
-					case "fatman":
-						if (BitConverter.ToInt16(current.FATM_HP, 0) == 0 || current.FATM_ST == 0)
-						{
-							vars.isBoss = false;
-							vars.currentBoss = "";
-							vars.isSplitting = true;
-						}
+					break;
+				case "w25a":
+					if (current.HARR_HP > 1) vars.isBoss = true;
+					if (vars.isBoss && (current.HARR_HP == 0)) 
+					{
+						vars.isBoss = false;
+						vars.isSplitting = true;
+					}
 
-						break;
+					break;
+				case "w31c":
+					if (BitConverter.ToInt16(current.VAMP_HP, 0) > 1) vars.isBoss = true;
+					if (vars.isBoss && (BitConverter.ToInt16(current.VAMP_HP, 0) == 0 || BitConverter.ToInt16(current.VAMP_ST, 0) == 0))
+					{
+						vars.isBoss = false;
+						vars.isSplitting = true;
+					}
 
-					case "harrier":
-						if (current.HARR_HP == 0) 
-						{
-							vars.isBoss = false;
-							vars.currentBoss = "";
-							vars.isSplitting = true;
-						}
+					break;
+				case "w32b":
+					if (current.VAMP2_HP > 1) vars.isBoss = true;
+					if (vars.isBoss && (current.VAMP2_HP == 0 || current.VAMP2_ST == 0))
+					{
+						vars.isBoss = false;
+						vars.isSplitting = true;
+					}
 
-						break;
-
-					case "vamp":
-						if (BitConverter.ToInt16(current.VAMP_HP, 0) == 0 || BitConverter.ToInt16(current.VAMP_ST, 0) == 0)
-						{
-							vars.isBoss = false;
-							vars.currentBoss = "";
-							vars.isSplitting = true;
-						}
-
-						break;
-
-				}
+					break;
+				case "w46a":
+					if (current.MANTAS_HP > 1) vars.isBoss = true;
+					if (vars.isBoss && (current.MANTAS_HP == 0))
+					{
+						vars.isBoss = false;
+						vars.isSplitting = true;
+					}
+					break;
+				case "w61a":
+					if (current.SOLI_HP > 1) vars.isBoss = true;
+					if (vars.isBoss && (current.SOLI_HP == 0 || current.SOLI_ST == 0))
+					{
+						vars.isBoss = false;
+						vars.isSplitting = true;
+					}
+					break;
 			}
 		}
 		
@@ -555,7 +573,9 @@ split
 
 				// Split exceptions for cutscenes
 				switch (room) {
-				
+					case "d005p03": // Elevator scene
+						vars.isRoom = true;
+						break;
 				}
 			}
 
