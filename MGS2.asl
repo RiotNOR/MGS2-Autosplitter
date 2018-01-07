@@ -29,8 +29,7 @@ startup
 	settings.Add("aslvarviewer", false, "Integrate room names and values with ASLVarViewer");
 
 	settings.Add ("tanker", true, "Tanker (only choose one of the below)");
-	settings.Add ("tanker_split_boss", false, "Split on bosses", "tanker");
-	// settings.Add ("tanker_split_rooms", true, "Split on every room change", "tanker");
+	settings.Add ("tanker_split_boss", true, "Split on bosses", "tanker");
 	settings.Add ("tanker_split_rooms_specific", true, "Split on specific room change", "tanker");
 
 	settings.Add ("tanker_w00a", true, "Alt Deck", "tanker_split_rooms_specific");
@@ -50,8 +49,7 @@ startup
 	settings.Add ("tanker_w04c", true, "Hold N. 3", "tanker_split_rooms_specific");
 
 	settings.Add ("plant", true, "Plant (only choose one of the below)");
-	settings.Add ("plant_split_boss", false, "Split on bosses", "plant");
-	// settings.Add ("plant_split_rooms", true, "Split on every room change", "plant");
+	settings.Add ("plant_split_boss", true, "Split on bosses", "plant");
 	settings.Add ("plant_split_rooms_specific", true, "Split on specific room change", "plant");
 
 	settings.Add ("plant_museum", true, "Plant Beggining Message", "plant_split_rooms_specific");
