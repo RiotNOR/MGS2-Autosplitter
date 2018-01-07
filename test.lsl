@@ -161,10 +161,9 @@
         <Start>True</Start>
         <Split>True</Split>
         <CustomSettings>
-          <Setting id="game" type="bool">False</Setting>
+          <Setting id="aslvarviewer" type="bool">False</Setting>
           <Setting id="tanker" type="bool">True</Setting>
           <Setting id="tanker_split_boss" type="bool">True</Setting>
-          <Setting id="tanker_split_rooms" type="bool">False</Setting>
           <Setting id="tanker_split_rooms_specific" type="bool">True</Setting>
           <Setting id="tanker_w00a" type="bool">True</Setting>
           <Setting id="tanker_w00b" type="bool">True</Setting>
@@ -183,7 +182,6 @@
           <Setting id="tanker_w04c" type="bool">True</Setting>
           <Setting id="plant" type="bool">True</Setting>
           <Setting id="plant_split_boss" type="bool">True</Setting>
-          <Setting id="plant_split_rooms" type="bool">False</Setting>
           <Setting id="plant_split_rooms_specific" type="bool">True</Setting>
           <Setting id="plant_museum" type="bool">True</Setting>
           <Setting id="plant_w11a" type="bool">True</Setting>

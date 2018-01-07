@@ -178,7 +178,6 @@ init
 
 	vars.plantRooms = new string[]
 	{
-		"museum",
 		"w11a",
 		"w11b",
 		"w11c",
@@ -230,7 +229,6 @@ init
 
 	vars.plantRoomNames = new string[]
 	{
-		"Plant Beggining Message",
 		"Strut A Sea Dock",
 		"Strut A Sea Dock (Bomb disposal)",
 		"Strut A Sea Dock (Fortune Fight)",
@@ -282,6 +280,7 @@ init
 
 	vars.plantCutscenes = new string[]
 	{
+		"museum",
 		"d001p01",
 		"d001p02",
 		"d005p01",
