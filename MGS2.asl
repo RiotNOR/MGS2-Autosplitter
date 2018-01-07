@@ -537,7 +537,7 @@ split
 				if(settings["plant_W14a"] && room == "w14a") vars.isRoom = true;
 				if(settings["plant_w15a"] && room == "w15a") vars.isRoom = true;
 				if(settings["plant_w15b"] && room == "w15b") vars.isRoom = true;
-				if(settings["plant_w16a"] && room == "w16b") vars.isRoom = true;
+				if(settings["plant_w16a"] && room == "w16a") vars.isRoom = true;
 				if(settings["plant_w16b"] && room == "w16b") vars.isRoom = true;
 				if(settings["plant_w17a"] && room == "w17a") vars.isRoom = true;
 				if(settings["plant_w18a"] && room == "w18a") vars.isRoom = true;
@@ -548,7 +548,7 @@ split
 				if(settings["plant_w20d"] && room == "w20d") vars.isRoom = true;
 				if(settings["plant_w21a"] && room == "w21a") vars.isRoom = true;
 				if(settings["plant_w22a"] && room == "w22a") vars.isRoom = true;
-				if(settings["plant_w23b"] && room == "w23a") vars.isRoom = true;
+				if(settings["plant_w23b"] && room == "w23b") vars.isRoom = true;
 				if(settings["plant_w24a"] && room == "w24a") vars.isRoom = true;
 				if(settings["plant_w24b"] && room == "w24b") vars.isRoom = true;
 				if(settings["plant_w24c"] && room == "w24c") vars.isRoom = true;
@@ -577,6 +577,14 @@ split
 				// Split exceptions for cutscenes
 				switch (room) {
 					case "d005p01": // Elevator scene
+						vars.isRoom = true;
+						break;
+
+					case "d010p01":
+						vars.isRoom = true;
+						break;
+
+					case "d012p01":
 						vars.isRoom = true;
 						break;
 				}
