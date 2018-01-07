@@ -468,7 +468,10 @@ split
 			switch (room)
 			{
 				case "w20c":
-					if (BitConverter.ToInt16(current.FATM_HP, 0) > 1) vars.isBoss = true;
+					if (BitConverter.ToInt16(current.FATM_HP, 0) > 1 && current.FATM_ST > 1) 
+					{
+						vars.isBoss = true;
+					}
 					if (vars.isBoss && (BitConverter.ToInt16(current.FATM_HP, 0) == 0 || current.FATM_ST == 0))
 					{
 						vars.isBoss = false;
@@ -477,8 +480,11 @@ split
 
 					break;
 				case "w25a":
-					if (current.HARR_HP > 1) vars.isBoss = true;
-					if (vars.isBoss && (current.HARR_HP == 0)) 
+					if (BitConverter.ToInt16(current.HARR_HP, 0) > 1) 
+					{
+						vars.isBoss = true;
+					}
+					if (vars.isBoss && (BitConverter.ToInt16(current.HARR_HP, 0) == 0)) 
 					{
 						vars.isBoss = false;
 						vars.isSplitting = true;
@@ -486,7 +492,10 @@ split
 
 					break;
 				case "w31c":
-					if (BitConverter.ToInt16(current.VAMP_HP, 0) > 1) vars.isBoss = true;
+					if (BitConverter.ToInt16(current.VAMP_HP, 0) > 1 && BitConverter.ToInt16(current.VAMP_ST, 0) > 1) 
+					{
+						vars.isBoss = true;
+					}
 					if (vars.isBoss && (BitConverter.ToInt16(current.VAMP_HP, 0) == 0 || BitConverter.ToInt16(current.VAMP_ST, 0) == 0))
 					{
 						vars.isBoss = false;
@@ -495,7 +504,10 @@ split
 
 					break;
 				case "w32b":
-					if (current.VAMP2_HP > 1) vars.isBoss = true;
+					if (current.VAMP2_HP > 1 && current.VAMP2_ST > 1) 
+					{
+						vars.isBoss = true;
+					}
 					if (vars.isBoss && (current.VAMP2_HP == 0 || current.VAMP2_ST == 0))
 					{
 						vars.isBoss = false;
@@ -504,15 +516,21 @@ split
 
 					break;
 				case "w46a":
-					if (current.MANTAS_HP > 1) vars.isBoss = true;
-					if (vars.isBoss && (current.MANTAS_HP == 0))
+					if (current.MANTA_HP > 1) 
+					{
+						vars.isBoss = true;
+					}
+					if (vars.isBoss && (current.MANTA_HP == 0))
 					{
 						vars.isBoss = false;
 						vars.isSplitting = true;
 					}
 					break;
 				case "w61a":
-					if (current.SOLI_HP > 1) vars.isBoss = true;
+					if (current.SOLI_HP > 1 && current.SOLI_ST > 1) 
+					{
+						vars.isBoss = true;
+					}
 					if (vars.isBoss && (current.SOLI_HP == 0 || current.SOLI_ST == 0))
 					{
 						vars.isBoss = false;
