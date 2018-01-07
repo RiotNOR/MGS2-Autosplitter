@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Layout version="1.6.1">
   <Mode>Vertical</Mode>
-  <X>-393</X>
+  <X>-392</X>
   <Y>81</Y>
   <VerticalWidth>286</VerticalWidth>
   <VerticalHeight>1236</VerticalHeight>
@@ -161,7 +161,7 @@
         <Start>True</Start>
         <Split>True</Split>
         <CustomSettings>
-          <Setting id="aslvarviewer" type="bool">False</Setting>
+          <Setting id="aslvarviewer" type="bool">True</Setting>
           <Setting id="tanker" type="bool">True</Setting>
           <Setting id="tanker_split_boss" type="bool">True</Setting>
           <Setting id="tanker_split_rooms_specific" type="bool">True</Setting>

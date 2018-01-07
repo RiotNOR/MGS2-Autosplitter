@@ -144,7 +144,9 @@ init
 		"w03b",
 		"w04a",
 		"w04b",
-		"w04c"
+		"w04c",
+		"ending",
+		"museum"
 	};
 
 	// For integration with ASLVarViewer
@@ -165,6 +167,8 @@ init
 		"Hold N. 1",
 		"Hold N. 2",
 		"Hold N. 3",
+		"Ending",
+		"Museum",
 	};
 
 	vars.tankerCutscenes = new string[]
@@ -522,16 +526,15 @@ split
 		{
 			if (room != oldRoom && !plantCutscenes.Any (oldRoom.Contains))
 			{
-				if(settings["plant_museum"] && room == "museum") vars.isRoom = true;
 				if(settings["plant_w11a"] && room == "w11a") vars.isRoom = true;
 				if(settings["plant_w11b"] && room == "w11b") vars.isRoom = true;
 				if(settings["plant_w11c"] && room == "w11c") vars.isRoom = true;
 				if(settings["plant_w12a"] && room == "w12a") vars.isRoom = true;
 				if(settings["plant_w12c"] && room == "w12c") vars.isRoom = true;
-				if(settings["plant_W12b"] && room == "W12b") vars.isRoom = true;
+				if(settings["plant_W12b"] && room == "w12b") vars.isRoom = true;
 				if(settings["plant_W13a"] && room == "w13a") vars.isRoom = true;
-				if(settings["plant_W13b"] && room == "W13b") vars.isRoom = true;
-				if(settings["plant_W14a"] && room == "W14a") vars.isRoom = true;
+				if(settings["plant_W13b"] && room == "w13b") vars.isRoom = true;
+				if(settings["plant_W14a"] && room == "w14a") vars.isRoom = true;
 				if(settings["plant_w15a"] && room == "w15a") vars.isRoom = true;
 				if(settings["plant_w15b"] && room == "w15b") vars.isRoom = true;
 				if(settings["plant_w16a"] && room == "w16b") vars.isRoom = true;
@@ -573,7 +576,7 @@ split
 
 				// Split exceptions for cutscenes
 				switch (room) {
-					case "d005p03": // Elevator scene
+					case "d005p01": // Elevator scene
 						vars.isRoom = true;
 						break;
 				}
@@ -589,7 +592,7 @@ split
 
 	if (vars.isSplitting)
 	{
-		print ("Split on: " + current.ROOM);
+		print ("Split on: " + current.ROOM + " -- Previous room: " + old.ROOM);
 		vars.isSplitting = false;
 		return true;
 	}
