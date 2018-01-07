@@ -228,6 +228,58 @@ init
 		"w61a"
 	};
 
+	vars.plantRoomNames = new string[]
+	{
+		"Plant Beggining Message",
+		"Strut A Sea Dock",
+		"Strut A Sea Dock (Bomb disposal)",
+		"Strut A Sea Dock (Fortune Fight)",
+		"Strut A Roof",
+		"Strut A Roof (Last Bomb)",
+		"Strut A Pump room",
+		"AB Connecting bridge",
+		"AB Connecting bridge (With Sensor B)",
+		"Strut B Transformer Room",
+		"BC Connecting bridge",
+		"BC Connecting bridge (After Stillman cutscene)",
+		"Strut C Dining Hall",
+		"Strut C Dining Hall (after 'd014p01')",
+		"CD Connecting bridge",
+		"Strut D Sediment Pool",
+		"DE Connecting bridge",
+		"Strut E Parcel room, 1F",
+		"Strut E Heliport",
+		"Strut E Heliport (last bomb)",
+		"Strut E Heliport (After ninja cutscene)",
+		"EF Connecting bridge",
+		"Strut F Warehouse",
+		"FA Connecting bridge",
+		"Shell 1 Core",
+		"Shell 1 Core B1",
+		"Shell 1 Core B2,Computer's Room",
+		"Shell 1 B1 Hall,Hostages Room",
+		"Shell 1,2 Connecting Bridge",
+		"Shell 1,2 Connecting Bridge (Destroyed)",
+		"Strut L perimeter",
+		"KL Connecting Bridge ",
+		"Strut L Sewage Treatment Facility",
+		"Shell 2 Core,1F Air Purification Room",
+		"Website Cutscene",
+		"Shell 2 Core,B1 Filtration Chamber NO1",
+		"Shell 2 Core,B1 Filtration Chamber NO2 (Vamp Fight)",
+		"Shell 2 Core,1F Air Purification Room (w/emma)",
+		"Strut L Oil Fence",
+		"Strut L Oil Fence (Vamp Fight)",
+		"Arsenal Gear-Stomach ",
+		"Arsenal Gear-Jujenum",
+		"Arsenal Gear-Ascending Colon",
+		"Arsenal Gear-Ileum",
+		"Arsenal Gear-Sigmoid Colon",
+		"Arsenal Gear-Rectum",
+		"Arsenal Gear (After Ray Battle)",
+		"Federal Hall"
+	};
+
 	vars.plantCutscenes = new string[]
 	{
 		"d001p01",
@@ -309,8 +361,13 @@ split
 
 	if (settings["aslvarviewer"])
 	{
-		if (Array.IndexOf(tanker, current.ROOM) != -1) {
+		if (Array.IndexOf(tanker, current.ROOM) != -1) 
+		{
 			vars.currentRoomName = vars.tankerRoomNames[Array.IndexOf(tanker, current.ROOM)];
+		}
+		else if (Array.IndexOf(plant, current.ROOM) != -1)
+		{
+			vars.currentRoomName = vars.plantRoomNames[Array.IndexOf(tanker, current.ROOM)];
 		}
 
 		vars.currentRoomValue = current.ROOM;
