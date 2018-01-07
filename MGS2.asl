@@ -429,19 +429,19 @@ split
 				// Split exceptions for cutscenes
 				switch (room) {
 					case "d04t": // Cutscene in room before Olga
-						vars.isRoom = true;
+						vars.isRoom = settings["tanker_w00c"];
 						break;
 
 					case "d10t": // Cutscene in room before reaching the tanker holds
-						vars.isRoom = true;
+						vars.isRoom = settings["w04a"];
 						break;
 
 					case "d11t": // Cutscene when reaching the last room of the holds
-						vars.isRoom = true;
+						vars.isRoom = settings["w04c"];
 						break;
 
 					case "d12t": // Cutscene after taking pictures.
-						vars.isRoom = true;
+						vars.isRoom = settings["w04a"];
 						break;
 
 					case "ending": // Tanker end
