@@ -19,7 +19,7 @@ startup
 
 	settings.Add ("tanker", true, "Tanker (only choose one of the below)");
 	settings.Add ("tanker_split_boss", false, "Split on bosses", "tanker");
-	settings.Add ("tanker_split_rooms", true, "Split on every room change", "tanker");
+	// settings.Add ("tanker_split_rooms", true, "Split on every room change", "tanker");
 	settings.Add ("tanker_split_rooms_specific", true, "Split on specific room change", "tanker");
 
 	settings.Add ("tanker_w00a", true, "Alt Deck", "tanker_split_rooms_specific");
@@ -40,7 +40,7 @@ startup
 
 	settings.Add ("plant", true, "Plant (only choose one of the below)");
 	settings.Add ("plant_split_boss", false, "Split on bosses", "plant");
-	settings.Add ("plant_split_rooms", true, "Split on every room change", "plant");
+	// settings.Add ("plant_split_rooms", true, "Split on every room change", "plant");
 	settings.Add ("plant_split_rooms_specific", true, "Split on specific room change", "plant");
 
 	settings.Add ("plant_museum", true, "Plant Beggining Message", "plant_split_rooms_specific");
@@ -281,15 +281,16 @@ update
 
 split
 {
-
+	// Need to remove some redundant vars later.
 	bool enableTanker = settings["tanker"];
 	bool enableTankerSplitBoss = settings["tanker_split_boss"];
-	bool enableTankerSplitRooms = settings["tanker_split_rooms"];
+	// bool enableTankerSplitRooms = settings["tanker_split_rooms"];
 	bool enableTankerSplitSpecific = settings["tanker_split_rooms_specific"];
 
 	bool enablePlant = settings["plant"];
 	bool enablePlantSplitBoss = settings["plant_split_boss"];
-	bool enablePlantSplitRooms = settings["plant_split_rooms"];
+	// bool enablePlantSplitRooms = settings["plant_split_rooms"];
+	bool enablePlantSplitSpecific = settings["plant_split_rooms_specific"];
 
 	string room = current.ROOM;
 	string oldRoom = old.ROOM;
@@ -332,14 +333,7 @@ split
 			}
 		}
 
-		if (enableTankerSplitRooms && tanker.Any (room.Contains))
-		{
-			if (room != oldRoom && !tankerCutscenes.Any (oldRoom.Contains))
-			{
-				vars.isSplitting = true;
-			}
-		}
-		else if (enableTankerSplitSpecific)
+		if (enableTankerSplitSpecific)
 		{
 			if (room != oldRoom && !tankerCutscenes.Any (oldRoom.Contains))
 			{
@@ -449,10 +443,69 @@ split
 				}
 			}
 		}
-		else if (enablePlantSplitRooms && plant.Any (room.Contains))
+		
+		if (enablePlantSplitSpecific)
 		{
 			if (room != oldRoom && !plantCutscenes.Any (oldRoom.Contains))
 			{
+				if(settings["plant_museum"] && room == "museum") vars.isRoom = true;
+				if(settings["plant_w11a"] && room == "w11a") vars.isRoom = true;
+				if(settings["plant_w11b"] && room == "w11b") vars.isRoom = true;
+				if(settings["plant_w11c"] && room == "w11c") vars.isRoom = true;
+				if(settings["plant_w12a"] && room == "w12a") vars.isRoom = true;
+				if(settings["plant_w12c"] && room == "w12c") vars.isRoom = true;
+				if(settings["plant_W12b"] && room == "W12b") vars.isRoom = true;
+				if(settings["plant_W13a"] && room == "w13a") vars.isRoom = true;
+				if(settings["plant_W13b"] && room == "W13b") vars.isRoom = true;
+				if(settings["plant_W14a"] && room == "W14a") vars.isRoom = true;
+				if(settings["plant_w15a"] && room == "w15a") vars.isRoom = true;
+				if(settings["plant_w15b"] && room == "w15b") vars.isRoom = true;
+				if(settings["plant_w16a"] && room == "w16b") vars.isRoom = true;
+				if(settings["plant_w16b"] && room == "w16b") vars.isRoom = true;
+				if(settings["plant_w17a"] && room == "w17a") vars.isRoom = true;
+				if(settings["plant_w18a"] && room == "w18a") vars.isRoom = true;
+				if(settings["plant_w19a"] && room == "w19a") vars.isRoom = true;
+				if(settings["plant_w20a"] && room == "w20a") vars.isRoom = true;
+				if(settings["plant_w20b"] && room == "w20b") vars.isRoom = true;
+				if(settings["plant_w20c"] && room == "w20c") vars.isRoom = true;
+				if(settings["plant_w20d"] && room == "w20d") vars.isRoom = true;
+				if(settings["plant_w21a"] && room == "w21a") vars.isRoom = true;
+				if(settings["plant_w22a"] && room == "w22a") vars.isRoom = true;
+				if(settings["plant_w23b"] && room == "w23a") vars.isRoom = true;
+				if(settings["plant_w24a"] && room == "w24a") vars.isRoom = true;
+				if(settings["plant_w24b"] && room == "w24b") vars.isRoom = true;
+				if(settings["plant_w24c"] && room == "w24c") vars.isRoom = true;
+				if(settings["plant_w25a"] && room == "w25a") vars.isRoom = true;
+				if(settings["plant_w25b"] && room == "w25b") vars.isRoom = true;
+				if(settings["plant_w25b_2"] && room == "w25b") vars.isRoom = true;
+				if(settings["plant_w25c"] && room == "w25c") vars.isRoom = true;
+				if(settings["plant_w25d"] && room == "w25d") vars.isRoom = true;
+				if(settings["plant_w28a"] && room == "w28a") vars.isRoom = true;
+				if(settings["plant_w31a"] && room == "w31a") vars.isRoom = true;
+				if(settings["plant_webdemo"] && room == "webdemo") vars.isRoom = true;
+				if(settings["plant_w31b"] && room == "w31b") vars.isRoom = true;
+				if(settings["plant_w31c"] && room == "w31c") vars.isRoom = true;
+				if(settings["plant_w31d"] && room == "w31d") vars.isRoom = true;
+				if(settings["plant_w32a"] && room == "w32a") vars.isRoom = true;
+				if(settings["plant_w32b"] && room == "w32b") vars.isRoom = true;
+				if(settings["plant_w41a"] && room == "w41a") vars.isRoom = true;
+				if(settings["plant_w42a"] && room == "w42a") vars.isRoom = true;
+				if(settings["plant_w43a"] && room == "w43a") vars.isRoom = true;
+				if(settings["plant_w44a"] && room == "w44a") vars.isRoom = true;
+				if(settings["plant_w45a"] && room == "w45a") vars.isRoom = true;
+				if(settings["plant_w46a"] && room == "w46a") vars.isRoom = true;
+				if(settings["plant_w51a"] && room == "w51a") vars.isRoom = true;
+				if(settings["plant_w61a"] && room == "w61a") vars.isRoom = true;
+
+				// Split exceptions for cutscenes
+				switch (room) {
+				
+				}
+			}
+
+			if (room != oldRoom && vars.isRoom)
+			{
+				vars.isRoom = false;
 				vars.isSplitting = true;
 			}
 		}
