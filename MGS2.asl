@@ -433,15 +433,15 @@ split
 						break;
 
 					case "d10t": // Cutscene in room before reaching the tanker holds
-						vars.isRoom = settings["w04a"];
+						vars.isRoom = settings["tanker_w04a"];
 						break;
 
 					case "d11t": // Cutscene when reaching the last room of the holds
-						vars.isRoom = settings["w04c"];
+						vars.isRoom = settings["tanker_w04c"];
 						break;
 
 					case "d12t": // Cutscene after taking pictures.
-						vars.isRoom = settings["w04a"];
+						vars.isRoom = settings["tanker_w04a"];
 						break;
 
 					case "ending": // Tanker end
