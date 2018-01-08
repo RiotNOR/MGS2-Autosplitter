@@ -600,15 +600,15 @@ split
 				// Split exceptions for cutscenes
 				switch (room) {
 					case "d005p01": // Elevator scene
-						vars.isRoom = true;
+						vars.isRoom = settings["plant_w12a"];
 						break;
 
 					case "d010p01":
-						vars.isRoom = true;
+						vars.isRoom = settings["plant_W14a"];
 						break;
 
 					case "d012p01":
-						vars.isRoom = true;
+						vars.isRoom = settings["plant_w15a"];
 						break;
 
 					// Temp fix for manta rays.
