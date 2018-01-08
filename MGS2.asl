@@ -52,7 +52,6 @@ startup
 	settings.Add ("plant_split_boss", true, "Split on bosses", "plant");
 	settings.Add ("plant_split_rooms_specific", true, "Split on specific room change", "plant");
 
-	settings.Add ("plant_museum", true, "Plant Beggining Message", "plant_split_rooms_specific");
 	settings.Add ("plant_w11a", true, "Strut A Sea Dock", "plant_split_rooms_specific");
 	settings.Add ("plant_w11b", true, "Strut A Sea Dock (Bomb disposal)", "plant_split_rooms_specific");
 	settings.Add ("plant_w11c", true, "Strut A Sea Dock (Fortune Fight)", "plant_split_rooms_specific");
