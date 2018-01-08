@@ -151,8 +151,8 @@ init
 	vars.tankerRoomNames = new string[]
 	{
 		"Alt Deck",
-		"Navigational Deck",
-		"Navigational Deck",
+		"Navigational Deck (Olga fight)",
+		"Navigational Deck (After Olga fight)",
 		"Deck A, crew's quarters",
 		"Deck A, crew's quarters,starboard",
 		"Deck C, crew's quarters",
@@ -429,7 +429,7 @@ split
 				// Split exceptions for cutscenes
 				switch (room) {
 					case "d04t": // Cutscene in room before Olga
-						vars.isRoom = settings["tanker_w00c"];
+						vars.isRoom = settings["tanker_w01e"];
 						break;
 
 					case "d10t": // Cutscene in room before reaching the tanker holds
