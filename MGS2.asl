@@ -28,7 +28,7 @@ startup
 
 	settings.Add("aslvarviewer", false, "Integrate room names and values with ASLVarViewer");
 
-	settings.Add ("tanker", true, "Tanker (only choose one of the below)");
+	settings.Add ("tanker", true, "Tanker");
 	settings.Add ("tanker_split_boss", true, "Split on bosses", "tanker");
 	settings.Add ("tanker_split_rooms_specific", true, "Split on specific room change", "tanker");
 
@@ -47,8 +47,10 @@ startup
 	settings.Add ("tanker_w04a", true, "Hold N. 1", "tanker_split_rooms_specific");
 	settings.Add ("tanker_w04b", true, "Hold N. 2", "tanker_split_rooms_specific");
 	settings.Add ("tanker_w04c", true, "Hold N. 3", "tanker_split_rooms_specific");
+	settings.Add ("tanker_ending", false, "Tanker ending (Choose one or the other)", "tanker_split_rooms_specific");
+	settings.Add ("tanker_plant_ending", true, "Tanker-Plant transition (Choose one or the other)", "tanker_split_rooms_specific");
 
-	settings.Add ("plant", true, "Plant (only choose one of the below)");
+	settings.Add ("plant", true, "Plant");
 	settings.Add ("plant_split_boss", true, "Split on bosses", "plant");
 	settings.Add ("plant_split_rooms_specific", true, "Split on specific room change", "plant");
 
@@ -444,8 +446,12 @@ split
 						break;
 
 					case "ending": // Tanker end
-						vars.isRoom = true;
+						vars.isRoom = settings["tanker_ending"];
 						break;			
+					
+					case "museum":
+						vars.isRoom = settings["tanker_plant_ending"];
+						break;
 				}
 			}
 
