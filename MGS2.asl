@@ -1,9 +1,12 @@
 state ("mgs2_sse")
 {
 	uint IGT: "mgs2_sse.exe", 0xD8AEF8;
+
 	string10 ROOM: "mgs2_sse.exe", 0x601F34, 0x2C;
-	byte2 SHOTS: "mgs2_sse.exe", 0x601F34, 0x140;
-	byte2 ALERTS: "mgs2_sse.exe", 0x1331B10, 0x30, 0x75C, 0x2B4, 0x7CF, 0x7E6;
+	byte2 SHOTS: "mgs2_sse.exe", 0x4D305C, 0x148;
+	byte2 ALERTS: "mgs2_sse.exe", 0x3E32E5, 0x75;
+	byte2 CONTINUES: "mgs2_sse.exe", 0x3E315E, 0x65;
+	byte2 RATIONS: "mgs2_sse.exe", 0x477EA4, 0x4DA, 0x36, 0x77, 0x1B, 0xE;
 
 	// 2 bytes need to be byte2, 4 can be int
 	int OLGA_ST: "mgs2_sse.exe", 0xAD4F6C, 0x0, 0x1E0, 0x44, 0x1F8, 0x13C;
@@ -106,17 +109,18 @@ startup
 
 init
 {
+	vars.ASLVar_currentRoomValue = "";
+	vars.ASLVar_currentRoomName = "";
+	vars.ASLVar_shotsFired = BitConverter.ToInt16(current.SHOTS, 0);
+	vars.ASLVar_alarmsTriggered = BitConverter.ToInt16(current.ALERTS, 0);
+	vars.ASLVar_continues = BitConverter.ToInt16(current.CONTINUES, 0);
+	vars.ASLVar_rations = BitConverter.ToInt16(current.RATIONS, 0);
+
 	vars.isSplitting = false;
 	vars.isBoss = false;
 	vars.isRoom = false;
 
 	vars.currentBoss = "";
-	
-	vars.currentRoomValue = "";
-	vars.currentRoomName = "";
-
-	vars.shotsFired = "";
-	vars.alarmsTriggered = "";
 
 	vars.iHateTheRayFightLetsNotSplitOnThisAgain = false;
 	vars.amesIsABitch = false;
@@ -357,7 +361,6 @@ update
 
 split
 {
-
 	// Need to remove some redundant vars later.
 	bool enableTanker = settings["tanker"];
 	bool enableTankerSplitBoss = settings["tanker_split_boss"];
@@ -390,16 +393,20 @@ split
 
 	if (settings["aslvarviewer"])
 	{
-		if (Array.IndexOf(tanker, current.ROOM) != -1) 
+		if (Array.IndexOf(tanker, room) != -1) 
 		{
-			vars.currentRoomName = vars.tankerRoomNames[Array.IndexOf(tanker, current.ROOM)];
+			vars.ASLVar_currentRoomName = vars.tankerRoomNames[Array.IndexOf(tanker, room)];
 		}
-		else if (Array.IndexOf(plant, current.ROOM) != -1)
+		else if (Array.IndexOf(plant, room) != -1)
 		{
-			vars.currentRoomName = vars.plantRoomNames[Array.IndexOf(plant, current.ROOM)];
+			vars.ASLVar_currentRoomName = vars.plantRoomNames[Array.IndexOf(plant, room)];
 		}
 
-		vars.currentRoomValue = current.ROOM;
+		vars.ASLVar_currentRoomValue = room;
+		vars.ASLVar_shotsFired = BitConverter.ToInt16(current.SHOTS, 0);
+		vars.ASLVar_alarmsTriggered = BitConverter.ToInt16(current.ALERTS, 0);
+		vars.ASLVar_continues = BitConverter.ToInt16(current.CONTINUES, 0);
+		vars.ASLVar_rations = BitConverter.ToInt16(current.RATIONS, 0);
 	}
 
 	if (enableTanker)
