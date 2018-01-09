@@ -7,6 +7,7 @@ state ("mgs2_sse")
 	byte2 ALERTS: "mgs2_sse.exe", 0x3E32E5, 0x75;
 	byte2 CONTINUES: "mgs2_sse.exe", 0x3E315E, 0x65;
 	byte2 RATIONS: "mgs2_sse.exe", 0x477EA4, 0x4DA, 0x36, 0x77, 0x1B, 0xE;
+	byte2 KILLS: "mgs2_sse.exe", 0xDED19D, 0x2DE, 0xB1, 0x756, 0x59A;
 
 	// 2 bytes need to be byte2, 4 can be int
 	int OLGA_ST: "mgs2_sse.exe", 0xAD4F6C, 0x0, 0x1E0, 0x44, 0x1F8, 0x13C;
@@ -111,10 +112,11 @@ init
 {
 	vars.ASLVar_currentRoomValue = "";
 	vars.ASLVar_currentRoomName = "";
-	vars.ASLVar_shotsFired = BitConverter.ToInt16(current.SHOTS, 0);
-	vars.ASLVar_alarmsTriggered = BitConverter.ToInt16(current.ALERTS, 0);
-	vars.ASLVar_continues = BitConverter.ToInt16(current.CONTINUES, 0);
-	vars.ASLVar_rations = BitConverter.ToInt16(current.RATIONS, 0);
+	vars.ASLVar_shotsFired = 0;
+	vars.ASLVar_alarmsTriggered = 0;
+	vars.ASLVar_continues = 0;
+	vars.ASLVar_rations = 0;
+	vars.ASLVar_kills = 0;
 
 	vars.isSplitting = false;
 	vars.isBoss = false;
@@ -391,7 +393,7 @@ split
 	string[] plantBosses = vars.plantBosses;
 	string[] plantCutscenes = vars.plantCutscenes;
 
-	if (settings["aslvarviewer"])
+	if (settings["aslvarviewer"] && !menu.Any(room.Contains))
 	{
 		if (Array.IndexOf(tanker, room) != -1) 
 		{
@@ -407,6 +409,7 @@ split
 		vars.ASLVar_alarmsTriggered = BitConverter.ToInt16(current.ALERTS, 0);
 		vars.ASLVar_continues = BitConverter.ToInt16(current.CONTINUES, 0);
 		vars.ASLVar_rations = BitConverter.ToInt16(current.RATIONS, 0);
+		vars.ASLVar_kills = BitConverter.ToInt16(current.KILLS, 0);
 	}
 
 	if (enableTanker)
