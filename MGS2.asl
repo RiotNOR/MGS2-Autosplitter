@@ -4,10 +4,10 @@ state ("mgs2_sse")
 
 	string10 ROOM: "mgs2_sse.exe", 0x601F34, 0x2C;
 	byte2 SHOTS: "mgs2_sse.exe", 0x4D305C, 0x148;
-	byte2 ALERTS: "mgs2_sse.exe", 0x3E32E5, 0x75;
+	byte2 ALERTS: "mgs2_sse.exe", 0x3E315E, 0x75;
 	byte2 CONTINUES: "mgs2_sse.exe", 0x3E315E, 0x65;
-	byte2 RATIONS: "mgs2_sse.exe", 0x477EA4, 0x4DA, 0x36, 0x77, 0x1B, 0xE;
-	byte2 KILLS: "mgs2_sse.exe", 0xDED19D, 0x2DE, 0xB1, 0x756, 0x59A;
+	byte2 RATIONS: "mgs2_sse.exe", 0x2E9A1E, 0x428;
+	byte2 KILLS: "mgs2_sse.exe", 0x3E315E, 0x77;
 
 	// 2 bytes need to be byte2, 4 can be int
 	int OLGA_ST: "mgs2_sse.exe", 0xAD4F6C, 0x0, 0x1E0, 0x44, 0x1F8, 0x13C;
