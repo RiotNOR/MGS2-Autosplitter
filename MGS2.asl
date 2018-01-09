@@ -2,6 +2,8 @@ state ("mgs2_sse")
 {
 	uint IGT: "mgs2_sse.exe", 0xD8AEF8;
 	string10 ROOM: "mgs2_sse.exe", 0x601F34, 0x2C;
+	byte2 SHOTS: "mgs2_sse.exe", 0x601F34, 0x140;
+	byte2 ALERTS: "mgs2_sse.exe", 0x1331B10, 0x30, 0x75C, 0x2B4, 0x7CF, 0x7E6;
 
 	// 2 bytes need to be byte2, 4 can be int
 	int OLGA_ST: "mgs2_sse.exe", 0xAD4F6C, 0x0, 0x1E0, 0x44, 0x1F8, 0x13C;
@@ -59,10 +61,10 @@ startup
 	settings.Add ("plant_w11c", true, "Strut A Sea Dock (Fortune Fight)", "plant_split_rooms_specific");
 	settings.Add ("plant_w12a", true, "Strut A Roof", "plant_split_rooms_specific");
 	settings.Add ("plant_w12c", true, "Strut A Roof (Last Bomb)", "plant_split_rooms_specific");
-	settings.Add ("plant_W12b", true, "Strut A Pump room", "plant_split_rooms_specific");
-	settings.Add ("plant_W13a", true, "AB Connecting bridge", "plant_split_rooms_specific");
-	settings.Add ("plant_W13b", true, "AB Connecting bridge (With Sensor B)", "plant_split_rooms_specific");
-	settings.Add ("plant_W14a", true, "Strut B Transformer Room", "plant_split_rooms_specific");
+	settings.Add ("plant_w12b", true, "Strut A Pump room", "plant_split_rooms_specific");
+	settings.Add ("plant_w13a", true, "AB Connecting bridge", "plant_split_rooms_specific");
+	settings.Add ("plant_w13b", true, "AB Connecting bridge (With Sensor B)", "plant_split_rooms_specific");
+	settings.Add ("plant_w14a", true, "Strut B Transformer Room", "plant_split_rooms_specific");
 	settings.Add ("plant_w15a", true, "BC Connecting bridge", "plant_split_rooms_specific");
 	settings.Add ("plant_w15b", true, "BC Connecting bridge (After Stillman cutscene)", "plant_split_rooms_specific");
 	settings.Add ("plant_w16a", true, "Strut C Dining Hall", "plant_split_rooms_specific");
@@ -79,15 +81,14 @@ startup
 	settings.Add ("plant_w23b", true, "FA Connecting bridge", "plant_split_rooms_specific");
 	settings.Add ("plant_w24a", true, "Shell 1 Core", "plant_split_rooms_specific");
 	settings.Add ("plant_w24b", true, "Shell 1 Core B1", "plant_split_rooms_specific");
-	settings.Add ("plant_w24c", true, "Shell 1 Core B2,Computer's Room", "plant_split_rooms_specific");
-	settings.Add ("plant_w25a", true, "Shell 1 B1 Hall,Hostages Room", "plant_split_rooms_specific");
-	settings.Add ("plant_w25b", true, "Shell 1,2 Connecting Bridge", "plant_split_rooms_specific");
-	settings.Add ("plant_w25b_2", true, "Shell 1,2 Connecting Bridge (Destroyed)", "plant_split_rooms_specific");
+	settings.Add ("plant_w24d", true, "Shell 1 Core B2,Computer's Room", "plant_split_rooms_specific");
+	settings.Add ("plant_w24c", true, "Shell 1 B1 Hall,Hostages Room", "plant_split_rooms_specific");
+	settings.Add ("plant_w25a", true, "Shell 1,2 Connecting Bridge", "plant_split_rooms_specific");
+	settings.Add ("plant_w25b", true, "Shell 1,2 Connecting Bridge (Destroyed)", "plant_split_rooms_specific");
 	settings.Add ("plant_w25c", true, "Strut L perimeter", "plant_split_rooms_specific");
 	settings.Add ("plant_w25d", true, "KL Connecting Bridge ", "plant_split_rooms_specific");
 	settings.Add ("plant_w28a", true, "Strut L Sewage Treatment Facility", "plant_split_rooms_specific");
 	settings.Add ("plant_w31a", true, "Shell 2 Core,1F Air Purification Room", "plant_split_rooms_specific");
-	settings.Add ("plant_webdemo", true, "Website Cutscene", "plant_split_rooms_specific");
 	settings.Add ("plant_w31b", true, "Shell 2 Core,B1 Filtration Chamber NO1", "plant_split_rooms_specific");
 	settings.Add ("plant_w31c", true, "Shell 2 Core,B1 Filtration Chamber NO2 (Vamp Fight)", "plant_split_rooms_specific");
 	settings.Add ("plant_w31d", true, "Shell 2 Core,1F Air Purification Room (w/emma)", "plant_split_rooms_specific");
@@ -113,6 +114,12 @@ init
 	
 	vars.currentRoomValue = "";
 	vars.currentRoomName = "";
+
+	vars.shotsFired = "";
+	vars.alarmsTriggered = "";
+
+	vars.iHateTheRayFightLetsNotSplitOnThisAgain = false;
+	vars.amesIsABitch = false;
 
 	vars.menus = new string[]
 	{
@@ -277,7 +284,7 @@ init
 		"Shell 1,2 Connecting Bridge",
 		"Shell 1,2 Connecting Bridge (Destroyed)",
 		"Strut L perimeter",
-		"KL Connecting Bridge ",
+		"KL Connecting Bridge",
 		"Strut L Sewage Treatment Facility",
 		"Shell 2 Core,1F Air Purification Room",
 		"Shell 2 Core,B1 Filtration Chamber NO1",
@@ -350,6 +357,7 @@ update
 
 split
 {
+
 	// Need to remove some redundant vars later.
 	bool enableTanker = settings["tanker"];
 	bool enableTankerSplitBoss = settings["tanker_split_boss"];
@@ -365,6 +373,10 @@ split
 	string oldRoom = old.ROOM;
 
 	string tempBoss = vars.currentBoss;
+
+	// ASLVarViewer extras
+	// vars.shotsFired = BitConverter.ToInt16(current.SHOTS, 0);
+	// vars.alarmsTriggered = BitConverter.ToInt16(current.ALERTS, 0);
 
 	// Needed for linq
 	string[] menu = vars.menus;
@@ -554,10 +566,10 @@ split
 				if(settings["plant_w11c"] && room == "w11c") vars.isRoom = true;
 				if(settings["plant_w12a"] && room == "w12a") vars.isRoom = true;
 				if(settings["plant_w12c"] && room == "w12c") vars.isRoom = true;
-				if(settings["plant_W12b"] && room == "w12b") vars.isRoom = true;
-				if(settings["plant_W13a"] && room == "w13a") vars.isRoom = true;
-				if(settings["plant_W13b"] && room == "w13b") vars.isRoom = true;
-				if(settings["plant_W14a"] && room == "w14a") vars.isRoom = true;
+				if(settings["plant_w12b"] && room == "w12b") vars.isRoom = true;
+				if(settings["plant_w13a"] && room == "w13a") vars.isRoom = true;
+				if(settings["plant_w13b"] && room == "w13b") vars.isRoom = true;
+				if(settings["plant_w14a"] && room == "w14a") vars.isRoom = true;
 				if(settings["plant_w15a"] && room == "w15a") vars.isRoom = true;
 				if(settings["plant_w15b"] && room == "w15b") vars.isRoom = true;
 				if(settings["plant_w16a"] && room == "w16a") vars.isRoom = true;
@@ -574,15 +586,14 @@ split
 				if(settings["plant_w23b"] && room == "w23b") vars.isRoom = true;
 				if(settings["plant_w24a"] && room == "w24a") vars.isRoom = true;
 				if(settings["plant_w24b"] && room == "w24b") vars.isRoom = true;
+				if(settings["plant_w24d"] && room == "w24d") vars.isRoom = true;
 				if(settings["plant_w24c"] && room == "w24c") vars.isRoom = true;
 				if(settings["plant_w25a"] && room == "w25a") vars.isRoom = true;
 				if(settings["plant_w25b"] && room == "w25b") vars.isRoom = true;
-				if(settings["plant_w25b_2"] && room == "w25b") vars.isRoom = true;
 				if(settings["plant_w25c"] && room == "w25c") vars.isRoom = true;
 				if(settings["plant_w25d"] && room == "w25d") vars.isRoom = true;
 				if(settings["plant_w28a"] && room == "w28a") vars.isRoom = true;
 				if(settings["plant_w31a"] && room == "w31a") vars.isRoom = true;
-				if(settings["plant_webdemo"] && room == "webdemo") vars.isRoom = true;
 				if(settings["plant_w31b"] && room == "w31b") vars.isRoom = true;
 				if(settings["plant_w31c"] && room == "w31c") vars.isRoom = true;
 				if(settings["plant_w31d"] && room == "w31d") vars.isRoom = true;
@@ -604,7 +615,7 @@ split
 						break;
 
 					case "d010p01":
-						vars.isRoom = settings["plant_W14a"];
+						vars.isRoom = settings["plant_w14a"];
 						break;
 
 					case "d012p01":
@@ -612,8 +623,38 @@ split
 						break;
 
 					// Temp fix for manta rays.
-					case "wmovie":
-						vars.isRoom = true;
+					case "d080p01":
+						if (!vars.iHateTheRayFightLetsNotSplitOnThisAgain)
+						{
+							vars.iHateTheRayFightLetsNotSplitOnThisAgain = true;
+							vars.isRoom = true;
+						}
+
+						break;
+					case "d036p03":
+						if (!vars.amesIsABitch && settings["plant_w25c"])
+						{
+							vars.amesIsABitch = true;
+							vars.isRoom = true;
+						}
+
+						break;
+				}
+
+				switch (oldRoom) {
+					case "d036p03":
+						if (settings["plant_w24b"] && room == "w24b")
+						{
+							vars.isRoom = true;
+						}
+
+						break;
+					case "d078p01":
+						if (settings["plant_w46a"] && room == "w46a")
+						{
+							vars.isRoom = true;
+						}
+
 						break;
 				}
 			}
@@ -626,9 +667,18 @@ split
 		}
 	}
 
+	if (vars.isSplitting)
+	{
+		print ("SPLIT FROM ==" + oldRoom + "== TO ==" + room + "==");
+	}
+
+	if (!vars.isSplitting && room != oldRoom)
+	{
+		print ("NO SPLIT FROM ==" + oldRoom + "== TO ==" + room + "==");
+	}
+
 	if (vars.isSplitting && !menu.Any(oldRoom.Contains))
 	{
-		print ("Split on: " + current.ROOM + " -- Previous room: " + old.ROOM);
 		vars.isSplitting = false;
 		return true;
 	}
