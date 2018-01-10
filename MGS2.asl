@@ -742,6 +742,15 @@ split
 				}
 			} 
 
+			if (tankerCutscenes.Any (room.Contains))
+			{
+				splitSuccess += "(is tanker cutscene)";
+			} 
+			else if (tankerCutscenes.Any (oldRoom.Contains))
+			{
+				splitSuccess += "(was tanker cutscene)";
+			}
+
 			if (plant.Any (room.Contains))
 			{
 				if (settings["plant_" + room]) {
@@ -757,6 +766,15 @@ split
 				}
 			}
 
+			if (plantCutscenes.Any (room.Contains))
+			{
+				splitSuccess += "(is plant cutscene)";
+			} 
+			else if (plantCutscenes.Any (oldRoom.Contains))
+			{
+				splitSuccess += "(was plant cutscene)";
+			}
+
 			splitSuccess += ": " + oldRoom + " --> " + room;
 
 			using(var sw = new System.IO.StreamWriter(vars.fullPath, true))
@@ -770,6 +788,8 @@ split
 		{
 			if (tanker.Any (room.Contains))
 			{
+				splitFail += "(tanker)";
+
 				if (settings["tanker_" + room]) {
 					splitFail += "(enabled)";
 				}
@@ -781,10 +801,22 @@ split
 				{
 					splitFail += "(???)";
 				}
-			} 
+			}
+
+			if (tankerCutscenes.Any (room.Contains))
+			{
+				splitFail += "(is tanker cutscene)";
+			}
+			else if (tankerCutscenes.Any (oldRoom.Contains))
+			{
+				splitFail += "(was tanker cutscene)";
+			}
+
 
 			if (plant.Any (room.Contains))
 			{
+				splitFail += "(plant)";
+				
 				if (settings["plant_" + room]) {
 					splitFail += "(enabled)";
 				}
@@ -796,6 +828,15 @@ split
 				{
 					splitFail += "(???)";
 				}
+			}
+
+			if (plantCutscenes.Any (room.Contains))
+			{
+				splitFail += "(is plant cutscene)";
+			}
+			else if (plantCutscenes.Any (oldRoom.Contains))
+			{
+				splitFail += "(was plant cutscene)";
 			}
 
 			splitFail += ": " + oldRoom + " --> " + room;
