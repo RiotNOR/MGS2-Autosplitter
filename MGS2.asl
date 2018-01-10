@@ -31,6 +31,14 @@ state ("mgs2_sse")
 
 startup
 {
+	string currentWorkingDir = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+	string fileName = "noSplit.txt";
+	string fullPath = currentWorkingDir + "\\" + fileName;
+
+	settings.Add("debug", false, "== DEBUG ==");
+	settings.Add("debug_file", false, "Write success/fail splits to: ", "debug");
+	settings.Add("debug_path", false, fullPath, "debug_file");
+
 	settings.Add("resets", true, "Reset the run upon going to menu");
 	settings.Add("aslvarviewer", false, "Integrate room names and values with ASLVarViewer");
 	
@@ -110,6 +118,17 @@ startup
 
 init
 {
+	if (settings["debug_path"])
+	{
+		string currentWorkingDir = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+		string fileName = "noSplit.txt";
+		vars.fullPath = currentWorkingDir + "\\" + fileName;
+
+		if (!System.IO.File.Exists(vars.fullPath)) {
+			System.IO.File.Create(vars.fullPath);
+		}
+	}
+
 	vars.ASLVar_currentRoomValue = "";
 	vars.ASLVar_currentRoomName = "";
 	vars.ASLVar_shotsFired = 0;
@@ -699,15 +718,97 @@ split
 		}
 	}
 
-	if (vars.isSplitting)
-	{
-		print ("SPLIT FROM ==" + oldRoom + "== TO ==" + room + "==");
-	}
 
-	if (!vars.isSplitting && room != oldRoom)
+	// START DEBUG
+	if (settings["debug_path"])
 	{
-		print ("NO SPLIT FROM ==" + oldRoom + "== TO ==" + room + "==");
+		string splitSuccess = "Success";
+		string splitFail = "Failure";
+
+		if (vars.isSplitting)
+		{
+			if (tanker.Any (room.Contains))
+			{
+				if (settings["tanker_" + room]) {
+					splitSuccess += "(enabled)";
+				}
+				else if (!settings["tanker_" + room])
+				{
+					splitSuccess += "(disable)";
+				} 
+				else
+				{
+					splitSuccess += "(???)";
+				}
+			} 
+
+			if (plant.Any (room.Contains))
+			{
+				if (settings["plant_" + room]) {
+					splitSuccess += "(enabled)";
+				}
+				else if (!settings["tanker_" + room])
+				{
+					splitSuccess += "(disable)";
+				} 
+				else
+				{
+					splitSuccess += "(???)";
+				}
+			}
+
+			splitSuccess += ": " + oldRoom + " --> " + room;
+
+			using(var sw = new System.IO.StreamWriter(vars.fullPath, true))
+			{
+				sw.WriteLine(splitSuccess);
+				sw.Close();
+			}
+		}
+
+		if (!vars.isSplitting && room != oldRoom)
+		{
+			if (tanker.Any (room.Contains))
+			{
+				if (settings["tanker_" + room]) {
+					splitFail += "(enabled)";
+				}
+				else if (!settings["tanker_" + room])
+				{
+					splitFail += "(disable)";
+				} 
+				else
+				{
+					splitFail += "(???)";
+				}
+			} 
+
+			if (plant.Any (room.Contains))
+			{
+				if (settings["plant_" + room]) {
+					splitFail += "(enabled)";
+				}
+				else if (!settings["tanker_" + room])
+				{
+					splitFail += "(disable)";
+				} 
+				else
+				{
+					splitFail += "(???)";
+				}
+			}
+
+			splitFail += ": " + oldRoom + " --> " + room;
+
+			using(var sw = new System.IO.StreamWriter(vars.fullPath, true))
+			{
+				sw.WriteLine(splitFail);
+				sw.Close();
+			}
+		}
+
 	}
+	// END DEBUG
 
 	if (vars.isSplitting && !menu.Any(oldRoom.Contains))
 	{
