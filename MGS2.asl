@@ -23,8 +23,8 @@ state ("mgs2_sse")
 	byte SOLI_HP: "mgs2_sse.exe", 0x664E7C, 0xB8;
 	byte SOLI_ST: "mgs2_sse.exe", 0x664E78, 0xC8;
 
-	byte VAMP2_HP: "mgs2_sse.exe", 0xB6DECC, 0x23E;
-	byte VAMP2_ST: "mgs2_sse.exe", 0xB75754, 0x344, 0x540, 0x7E0, 0x88, 0xCE;
+	byte2 VAMP2_HP: "mgs2_sse.exe", 0x61FBB8, 0x2AE;
+	byte2 VAMP2_ST: "mgs2_sse.exe", 0x664E7C, 0x48;
 
 	byte MANTA_HP: "mgs2_sse.exe", 0xAD4EA4, 0x54, 0x10, 0x10, 0x170, 0x7E0;
 }
@@ -541,11 +541,11 @@ split
 
 					break;
 				case "w32b":
-					if (current.VAMP2_HP > 1 && current.VAMP2_ST > 1) 
+					if (BitConverter.ToInt16(current.VAMP2_HP, 0) > 1 && BitConverter.ToInt16(current.VAMP2_ST, 0) > 1) 
 					{
 						vars.isBoss = true;
 					}
-					if (vars.isBoss && (current.VAMP2_HP == 0 || current.VAMP2_ST == 0))
+					if (vars.isBoss && (BitConverter.ToInt16(current.VAMP2_HP, 0) == 0 || BitConverter.ToInt16(current.VAMP2_ST, 0) == 0))
 					{
 						vars.isBoss = false;
 						vars.isSplitting = true;
@@ -565,6 +565,14 @@ split
 					// 	vars.isSplitting = true;
 					// }
 					
+					break;
+				case "d080p01":
+					if (!vars.iHateTheRayFightLetsNotSplitOnThisAgain)
+					{
+						vars.iHateTheRayFightLetsNotSplitOnThisAgain = true;
+						vars.isRoom = true;
+					}
+
 					break;
 				case "w61a":
 					if (current.SOLI_HP > 1 && current.SOLI_ST > 1) 
@@ -646,14 +654,14 @@ split
 						break;
 
 					// Temp fix for manta rays.
-					case "d080p01":
-						if (!vars.iHateTheRayFightLetsNotSplitOnThisAgain)
-						{
-							vars.iHateTheRayFightLetsNotSplitOnThisAgain = true;
-							vars.isRoom = true;
-						}
+					// case "d080p01":
+					// 	if (!vars.iHateTheRayFightLetsNotSplitOnThisAgain)
+					// 	{
+					// 		vars.iHateTheRayFightLetsNotSplitOnThisAgain = true;
+					// 		vars.isRoom = true;
+					// 	}
 
-						break;
+					// 	break;
 					case "d036p03":
 						if (!vars.amesIsABitch && settings["plant_w25c"])
 						{
