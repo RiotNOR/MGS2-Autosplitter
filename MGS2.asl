@@ -129,6 +129,7 @@ init
 
 	vars.menus = new string[]
 	{
+		"init",
 		"select",
 		"n_title",
 		"mselect",
@@ -342,9 +343,16 @@ init
 
 start
 {
-	if (current.IGT != 0)
+	string room = current.ROOM;
+	string[] menu = vars.menus;
+
+	if (room != "" && !menu.Any(room.Contains))
 	{
 		return true;
+	} 
+	else 
+	{
+		return false;
 	}
 }
 
@@ -353,11 +361,23 @@ exit
 	timer.IsGameTimePaused = true;
 }
 
+reset
+{
+	string room = current.ROOM;
+	string[] menu = vars.menus;
+
+	if (menu.Any(room.Contains))
+	{
+		print("RESET --- IN MENU");
+		return true;
+	}
+}
+
 update 
 {
-	if (current.ROOM == "n_title")
+	if (current.IGT != 0)
 	{
-		return false;
+		return true;
 	}
 }
 
@@ -366,22 +386,16 @@ split
 	// Need to remove some redundant vars later.
 	bool enableTanker = settings["tanker"];
 	bool enableTankerSplitBoss = settings["tanker_split_boss"];
-	// bool enableTankerSplitRooms = settings["tanker_split_rooms"];
 	bool enableTankerSplitSpecific = settings["tanker_split_rooms_specific"];
 
 	bool enablePlant = settings["plant"];
 	bool enablePlantSplitBoss = settings["plant_split_boss"];
-	// bool enablePlantSplitRooms = settings["plant_split_rooms"];
 	bool enablePlantSplitSpecific = settings["plant_split_rooms_specific"];
 
 	string room = current.ROOM;
 	string oldRoom = old.ROOM;
 
 	string tempBoss = vars.currentBoss;
-
-	// ASLVarViewer extras
-	// vars.shotsFired = BitConverter.ToInt16(current.SHOTS, 0);
-	// vars.alarmsTriggered = BitConverter.ToInt16(current.ALERTS, 0);
 
 	// Needed for linq
 	string[] menu = vars.menus;
@@ -696,7 +710,7 @@ split
 
 isLoading
 {
-	return false;
+	return true;
 }
 
 gameTime
