@@ -206,6 +206,7 @@ init
 		"w31c", // Vamp
 		"w32b", // Vamp 2
 		"w46a", // Mantas
+		"d080p01", // Manta temp fix
 		"w61a" // Snake
 	};
 
