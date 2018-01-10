@@ -31,9 +31,9 @@ state ("mgs2_sse")
 
 startup
 {
-
+	settings.Add("resets", true, "Reset the run upon going to menu");
 	settings.Add("aslvarviewer", false, "Integrate room names and values with ASLVarViewer");
-
+	
 	settings.Add ("tanker", true, "Tanker");
 	settings.Add ("tanker_split_boss", true, "Split on bosses", "tanker");
 	settings.Add ("tanker_split_rooms_specific", true, "Split on specific room change", "tanker");
@@ -366,9 +366,8 @@ reset
 	string room = current.ROOM;
 	string[] menu = vars.menus;
 
-	if (menu.Any(room.Contains))
+	if (settings["resets"] && menu.Any(room.Contains))
 	{
-		print("RESET --- IN MENU");
 		return true;
 	}
 }
