@@ -31,17 +31,17 @@ state ("mgs2_sse")
 
 startup
 {
-	string currentWorkingDir = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+	string currentWorkingDir = System.IO.Path.GetDirectoryName (Application.ExecutablePath);
 	string fileName = "noSplit.txt";
 	string fullPath = currentWorkingDir + "\\" + fileName;
 
-	settings.Add("debug", false, "== DEBUG ==");
-	settings.Add("debug_file", false, "Write success/fail splits to: ", "debug");
-	settings.Add("debug_path", false, fullPath, "debug_file");
+	settings.Add ("debug", false, "== DEBUG ==");
+	settings.Add ("debug_file", false, "Write success/fail splits to: ", "debug");
+	settings.Add ("debug_path", false, fullPath, "debug_file");
 
-	settings.Add("resets", true, "Reset the run upon going to menu");
-	settings.Add("aslvarviewer", false, "Integrate room names and values with ASLVarViewer");
-	
+	settings.Add ("resets", true, "Reset the run upon going to menu");
+	settings.Add ("aslvarviewer", false, "Integrate room names and values with ASLVarViewer");
+
 	settings.Add ("tanker", true, "Tanker");
 	settings.Add ("tanker_split_boss", true, "Split on bosses", "tanker");
 	settings.Add ("tanker_split_rooms_specific", true, "Split on specific room change", "tanker");
@@ -90,6 +90,7 @@ startup
 	settings.Add ("plant_w20d", true, "Strut E Heliport (After ninja cutscene)", "plant_split_rooms_specific");
 	settings.Add ("plant_w21a", true, "EF Connecting bridge", "plant_split_rooms_specific");
 	settings.Add ("plant_w22a", true, "Strut F Warehouse", "plant_split_rooms_specific");
+	settings.Add ("plant_w23a", true, "FA Connecting bridge", "plant_split_rooms_specific");
 	settings.Add ("plant_w23b", true, "FA Connecting bridge", "plant_split_rooms_specific");
 	settings.Add ("plant_w24a", true, "Shell 1 Core", "plant_split_rooms_specific");
 	settings.Add ("plant_w24b", true, "Shell 1 Core B1", "plant_split_rooms_specific");
@@ -118,14 +119,17 @@ startup
 
 init
 {
+	vars.runNum = 0;
 	if (settings["debug_path"])
 	{
-		string currentWorkingDir = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+		string currentWorkingDir = System.IO.Path.GetDirectoryName (Application.ExecutablePath);
 		string fileName = "noSplit.txt";
 		vars.fullPath = currentWorkingDir + "\\" + fileName;
+		vars.checkFormatLine = true;
 
-		if (!System.IO.File.Exists(vars.fullPath)) {
-			System.IO.File.Create(vars.fullPath);
+		if (!System.IO.File.Exists (vars.fullPath))
+		{
+			System.IO.File.Create (vars.fullPath);
 		}
 	}
 
@@ -145,6 +149,8 @@ init
 
 	vars.iHateTheRayFightLetsNotSplitOnThisAgain = false;
 	vars.amesIsABitch = false;
+
+	vars.isBossSplit = false;
 
 	vars.menus = new string[]
 	{
@@ -184,7 +190,7 @@ init
 	// For integration with ASLVarViewer
 	vars.tankerRoomNames = new string[]
 	{
-		"Alt Deck",
+		"Aft deck",
 		"Navigational Deck (Olga fight)",
 		"Navigational Deck (After Olga fight)",
 		"Deck A, crew's quarters",
@@ -211,10 +217,10 @@ init
 		"d05t",
 		"d10t",
 		"d11t",
-		"d12t",
+		"d12t", // Start of tanker ending
 		"d12t3",
 		"d12t4",
-		"d13t",
+		"d13t", // Save screen
 		"d14t"
 	};
 
@@ -253,6 +259,7 @@ init
 		"w20d",
 		"w21a",
 		"w22a",
+		"w23a",
 		"w23b",
 		"w24a",
 		"w24b",
@@ -304,6 +311,7 @@ init
 		"EF Connecting bridge",
 		"Strut F Warehouse",
 		"FA Connecting bridge",
+		"FA Connecting bridge",
 		"Shell 1 Core",
 		"Shell 1 Core B1",
 		"Shell 1 Core B2,Computer's Room",
@@ -334,12 +342,13 @@ init
 		"museum",
 		"d001p01",
 		"d001p02",
-		"d005p01",
+		"d005p01", // Up the elevator to w12a
 		"d005p03",
 		"d010p01",
 		"d012p01",
 		"d014p01",
 		"d021p01",
+		"d11t",
 		"d036p03",
 		"d036p05",
 		"d045p01",
@@ -348,6 +357,7 @@ init
 		"d055p01",
 		"d063p01",
 		"webdemo",
+		"wmovie",
 		"d065p02",
 		"d070p01",
 		"d070p09",
@@ -359,6 +369,8 @@ init
 		"d080p08",
 		"d082p01"
 	};
+
+	vars.testRoom = current.ROOM;
 }
 
 start
@@ -366,11 +378,38 @@ start
 	string room = current.ROOM;
 	string[] menu = vars.menus;
 
-	if (room != "" && !menu.Any(room.Contains))
+	if (room != "" && !menu.Any (room.Contains))
 	{
+		if (settings["debug_path"])
+		{
+			int lastLine = 0;
+
+			using (var sr = new System.IO.StreamReader(vars.fullPath))
+			{
+				string readStr = "";
+				int readNum = 0;
+
+				while (!sr.EndOfStream)
+				{
+					readStr = sr.ReadLine();
+				}
+
+				if (Int32.TryParse(readStr.Split(',')[0], out readNum))
+				{
+					lastLine = readNum;
+				}
+
+				sr.Close();
+			}
+
+			lastLine++;
+			
+			vars.runNum = lastLine;
+		}
+
 		return true;
-	} 
-	else 
+	}
+	else
 	{
 		return false;
 	}
@@ -383,16 +422,17 @@ exit
 
 reset
 {
+	
 	string room = current.ROOM;
 	string[] menu = vars.menus;
 
-	if (settings["resets"] && menu.Any(room.Contains))
+	if (settings["resets"] && menu.Any (room.Contains))
 	{
 		return true;
 	}
 }
 
-update 
+update
 {
 	if (current.IGT != 0)
 	{
@@ -402,6 +442,8 @@ update
 
 split
 {
+	vars.testRoom = current.ROOM;
+	
 	// Need to remove some redundant vars later.
 	bool enableTanker = settings["tanker"];
 	bool enableTankerSplitBoss = settings["tanker_split_boss"];
@@ -414,7 +456,7 @@ split
 	string room = current.ROOM;
 	string oldRoom = old.ROOM;
 
-	string tempBoss = vars.currentBoss;
+	string tempBoss = "";
 
 	// Needed for linq
 	string[] menu = vars.menus;
@@ -426,39 +468,41 @@ split
 	string[] plantBosses = vars.plantBosses;
 	string[] plantCutscenes = vars.plantCutscenes;
 
-	if (settings["aslvarviewer"] && !menu.Any(room.Contains))
+	if (settings["aslvarviewer"] && !menu.Any (room.Contains))
 	{
-		if (Array.IndexOf(tanker, room) != -1) 
+		if (Array.IndexOf (tanker, room) != -1)
 		{
-			vars.ASLVar_currentRoomName = vars.tankerRoomNames[Array.IndexOf(tanker, room)];
+			vars.ASLVar_currentRoomName = vars.tankerRoomNames[Array.IndexOf (tanker, room)];
 		}
-		else if (Array.IndexOf(plant, room) != -1)
+		else if (Array.IndexOf (plant, room) != -1)
 		{
-			vars.ASLVar_currentRoomName = vars.plantRoomNames[Array.IndexOf(plant, room)];
+			vars.ASLVar_currentRoomName = vars.plantRoomNames[Array.IndexOf (plant, room)];
 		}
 
 		vars.ASLVar_currentRoomValue = room;
-		vars.ASLVar_shotsFired = BitConverter.ToInt16(current.SHOTS, 0);
-		vars.ASLVar_alarmsTriggered = BitConverter.ToInt16(current.ALERTS, 0);
-		vars.ASLVar_continues = BitConverter.ToInt16(current.CONTINUES, 0);
-		vars.ASLVar_rations = BitConverter.ToInt16(current.RATIONS, 0);
-		vars.ASLVar_kills = BitConverter.ToInt16(current.KILLS, 0);
+		vars.ASLVar_shotsFired = BitConverter.ToInt16 (current.SHOTS, 0);
+		vars.ASLVar_alarmsTriggered = BitConverter.ToInt16 (current.ALERTS, 0);
+		vars.ASLVar_continues = BitConverter.ToInt16 (current.CONTINUES, 0);
+		vars.ASLVar_rations = BitConverter.ToInt16 (current.RATIONS, 0);
+		vars.ASLVar_kills = BitConverter.ToInt16 (current.KILLS, 0);
 	}
 
 	if (enableTanker)
 	{
-		
+
 		if (enableTankerSplitBoss && tankerBosses.Any (room.Contains))
 		{
 			if (current.OLGA_ST > 1)
 			{
-				vars.isBoss = true;
+				vars.isBoss = true;				
 			}
 
-			if (vars.isBoss && current.OLGA_ST == 0)
+			if (vars.isBoss && current.OLGA_ST == 0 && current.OLGA_ST != old.OLGA_ST)
 			{
 				vars.isBoss = false;
 				vars.isSplitting = true;
+				vars.isBossSplit = true;
+				tempBoss = "Olga";
 			}
 		}
 
@@ -483,9 +527,17 @@ split
 				if (settings["tanker_w04c"] && room == "w04c") vars.isRoom = true;
 
 				// Split exceptions for cutscenes
-				switch (room) {
+				switch (room)
+				{
 					case "d04t": // Cutscene in room before Olga
 						vars.isRoom = settings["tanker_w01e"];
+						break;
+
+					case "d05t": // Cutscene of Olga, before fight
+						if (oldRoom == "w01e")
+						{
+							vars.isRoom = settings["tanker_w00b"];
+						}
 						break;
 
 					case "d10t": // Cutscene in room before reaching the tanker holds
@@ -502,8 +554,8 @@ split
 
 					case "ending": // Tanker end
 						vars.isRoom = settings["tanker_ending"];
-						break;			
-					
+						break;
+
 					case "museum":
 						vars.isRoom = settings["tanker_plant_ending"];
 						break;
@@ -525,50 +577,58 @@ split
 			switch (room)
 			{
 				case "w20c":
-					if (BitConverter.ToInt16(current.FATM_HP, 0) > 1 && current.FATM_ST > 1) 
+					if (BitConverter.ToInt16 (current.FATM_HP, 0) > 1 && current.FATM_ST > 1)
 					{
 						vars.isBoss = true;
 					}
-					if (vars.isBoss && (BitConverter.ToInt16(current.FATM_HP, 0) == 0 || current.FATM_ST == 0))
+					if (vars.isBoss && (BitConverter.ToInt16 (current.FATM_HP, 0) == 0 || current.FATM_ST == 0))
 					{
 						vars.isBoss = false;
 						vars.isSplitting = true;
+						vars.isBossSplit = true;
+						tempBoss = "Fatman";
 					}
 
 					break;
 				case "w25a":
-					if (BitConverter.ToInt16(current.HARR_HP, 0) > 1) 
+					if (BitConverter.ToInt16 (current.HARR_HP, 0) > 1)
 					{
 						vars.isBoss = true;
 					}
-					if (vars.isBoss && (BitConverter.ToInt16(current.HARR_HP, 0) == 0)) 
+					if (vars.isBoss && (BitConverter.ToInt16 (current.HARR_HP, 0) == 0))
 					{
 						vars.isBoss = false;
 						vars.isSplitting = true;
+						vars.isBossSplit = true;
+						tempBoss = "Harrier";
 					}
 
 					break;
 				case "w31c":
-					if (BitConverter.ToInt16(current.VAMP_HP, 0) > 1 && BitConverter.ToInt16(current.VAMP_ST, 0) > 1) 
+					if (BitConverter.ToInt16 (current.VAMP_HP, 0) > 1 && BitConverter.ToInt16 (current.VAMP_ST, 0) > 1)
 					{
 						vars.isBoss = true;
 					}
-					if (vars.isBoss && (BitConverter.ToInt16(current.VAMP_HP, 0) == 0 || BitConverter.ToInt16(current.VAMP_ST, 0) == 0))
+					if (vars.isBoss && (BitConverter.ToInt16 (current.VAMP_HP, 0) == 0 || BitConverter.ToInt16 (current.VAMP_ST, 0) == 0))
 					{
 						vars.isBoss = false;
 						vars.isSplitting = true;
+						vars.isBossSplit = true;
+						tempBoss = "Vamp";
 					}
 
 					break;
 				case "w32b":
-					if (BitConverter.ToInt16(current.VAMP2_HP, 0) > 1 && BitConverter.ToInt16(current.VAMP2_ST, 0) > 1) 
+					if (BitConverter.ToInt16 (current.VAMP2_HP, 0) > 1 && BitConverter.ToInt16 (current.VAMP2_ST, 0) > 1)
 					{
 						vars.isBoss = true;
 					}
-					if (vars.isBoss && (BitConverter.ToInt16(current.VAMP2_HP, 0) == 0 || BitConverter.ToInt16(current.VAMP2_ST, 0) == 0))
+					if (vars.isBoss && (BitConverter.ToInt16 (current.VAMP2_HP, 0) == 0 || BitConverter.ToInt16 (current.VAMP2_ST, 0) == 0))
 					{
 						vars.isBoss = false;
 						vars.isSplitting = true;
+						vars.isBossSplit = true;
+						tempBoss = "Vamp2";
 					}
 
 					break;
@@ -584,18 +644,20 @@ split
 					// 	vars.isBoss = false;
 					// 	vars.isSplitting = true;
 					// }
-					
+
 					break;
 				case "d080p01":
 					if (!vars.iHateTheRayFightLetsNotSplitOnThisAgain)
 					{
 						vars.iHateTheRayFightLetsNotSplitOnThisAgain = true;
 						vars.isRoom = true;
+						vars.isBossSplit = true;
+						tempBoss = "Rays";
 					}
 
 					break;
 				case "w61a":
-					if (current.SOLI_HP > 1 && current.SOLI_ST > 1) 
+					if (current.SOLI_HP > 1 && current.SOLI_ST > 1)
 					{
 						vars.isBoss = true;
 					}
@@ -603,85 +665,89 @@ split
 					{
 						vars.isBoss = false;
 						vars.isSplitting = true;
+						vars.isBossSplit = true;
+						tempBoss = "Solidus";
 					}
 					break;
 			}
 		}
-		
+
 		if (enablePlantSplitSpecific)
 		{
 			if (room != oldRoom && !plantCutscenes.Any (oldRoom.Contains))
 			{
-				if(settings["plant_w11a"] && room == "w11a") vars.isRoom = true;
-				if(settings["plant_w11b"] && room == "w11b") vars.isRoom = true;
-				if(settings["plant_w11c"] && room == "w11c") vars.isRoom = true;
-				if(settings["plant_w12a"] && room == "w12a") vars.isRoom = true;
-				if(settings["plant_w12c"] && room == "w12c") vars.isRoom = true;
-				if(settings["plant_w12b"] && room == "w12b") vars.isRoom = true;
-				if(settings["plant_w13a"] && room == "w13a") vars.isRoom = true;
-				if(settings["plant_w13b"] && room == "w13b") vars.isRoom = true;
-				if(settings["plant_w14a"] && room == "w14a") vars.isRoom = true;
-				if(settings["plant_w15a"] && room == "w15a") vars.isRoom = true;
-				if(settings["plant_w15b"] && room == "w15b") vars.isRoom = true;
-				if(settings["plant_w16a"] && room == "w16a") vars.isRoom = true;
-				if(settings["plant_w16b"] && room == "w16b") vars.isRoom = true;
-				if(settings["plant_w17a"] && room == "w17a") vars.isRoom = true;
-				if(settings["plant_w18a"] && room == "w18a") vars.isRoom = true;
-				if(settings["plant_w19a"] && room == "w19a") vars.isRoom = true;
-				if(settings["plant_w20a"] && room == "w20a") vars.isRoom = true;
-				if(settings["plant_w20b"] && room == "w20b") vars.isRoom = true;
-				if(settings["plant_w20c"] && room == "w20c") vars.isRoom = true;
-				if(settings["plant_w20d"] && room == "w20d") vars.isRoom = true;
-				if(settings["plant_w21a"] && room == "w21a") vars.isRoom = true;
-				if(settings["plant_w22a"] && room == "w22a") vars.isRoom = true;
-				if(settings["plant_w23b"] && room == "w23b") vars.isRoom = true;
-				if(settings["plant_w24a"] && room == "w24a") vars.isRoom = true;
-				if(settings["plant_w24b"] && room == "w24b") vars.isRoom = true;
-				if(settings["plant_w24d"] && room == "w24d") vars.isRoom = true;
-				if(settings["plant_w24c"] && room == "w24c") vars.isRoom = true;
-				if(settings["plant_w25a"] && room == "w25a") vars.isRoom = true;
-				if(settings["plant_w25b"] && room == "w25b") vars.isRoom = true;
-				if(settings["plant_w25c"] && room == "w25c") vars.isRoom = true;
-				if(settings["plant_w25d"] && room == "w25d") vars.isRoom = true;
-				if(settings["plant_w28a"] && room == "w28a") vars.isRoom = true;
-				if(settings["plant_w31a"] && room == "w31a") vars.isRoom = true;
-				if(settings["plant_w31b"] && room == "w31b") vars.isRoom = true;
-				if(settings["plant_w31c"] && room == "w31c") vars.isRoom = true;
-				if(settings["plant_w31d"] && room == "w31d") vars.isRoom = true;
-				if(settings["plant_w32a"] && room == "w32a") vars.isRoom = true;
-				if(settings["plant_w32b"] && room == "w32b") vars.isRoom = true;
-				if(settings["plant_w41a"] && room == "w41a") vars.isRoom = true;
-				if(settings["plant_w42a"] && room == "w42a") vars.isRoom = true;
-				if(settings["plant_w43a"] && room == "w43a") vars.isRoom = true;
-				if(settings["plant_w44a"] && room == "w44a") vars.isRoom = true;
-				if(settings["plant_w45a"] && room == "w45a") vars.isRoom = true;
-				if(settings["plant_w46a"] && room == "w46a") vars.isRoom = true;
-				if(settings["plant_w51a"] && room == "w51a") vars.isRoom = true;
-				if(settings["plant_w61a"] && room == "w61a") vars.isRoom = true;
+				if (settings["plant_w11a"] && room == "w11a") vars.isRoom = true;
+				if (settings["plant_w11b"] && room == "w11b") vars.isRoom = true;
+				if (settings["plant_w11c"] && room == "w11c") vars.isRoom = true;
+				if (settings["plant_w12a"] && room == "w12a") vars.isRoom = true;
+				if (settings["plant_w12c"] && room == "w12c") vars.isRoom = true;
+				if (settings["plant_w12b"] && room == "w12b") vars.isRoom = true;
+				if (settings["plant_w13a"] && room == "w13a") vars.isRoom = true;
+				if (settings["plant_w13b"] && room == "w13b") vars.isRoom = true;
+				if (settings["plant_w14a"] && room == "w14a") vars.isRoom = true;
+				if (settings["plant_w15a"] && room == "w15a") vars.isRoom = true;
+				if (settings["plant_w15b"] && room == "w15b") vars.isRoom = true;
+				if (settings["plant_w16a"] && room == "w16a") vars.isRoom = true;
+				if (settings["plant_w16b"] && room == "w16b") vars.isRoom = true;
+				if (settings["plant_w17a"] && room == "w17a") vars.isRoom = true;
+				if (settings["plant_w18a"] && room == "w18a") vars.isRoom = true;
+				if (settings["plant_w19a"] && room == "w19a") vars.isRoom = true;
+				if (settings["plant_w20a"] && room == "w20a") vars.isRoom = true;
+				if (settings["plant_w20b"] && room == "w20b") vars.isRoom = true;
+				if (settings["plant_w20c"] && room == "w20c") vars.isRoom = true;
+				if (settings["plant_w20d"] && room == "w20d") vars.isRoom = true;
+				if (settings["plant_w21a"] && room == "w21a") vars.isRoom = true;
+				if (settings["plant_w22a"] && room == "w22a") vars.isRoom = true;
+				if (settings["plant_w23a"] && room == "w23a") vars.isRoom = true;
+				if (settings["plant_w23b"] && room == "w23b") vars.isRoom = true;
+				if (settings["plant_w24a"] && room == "w24a") vars.isRoom = true;
+				if (settings["plant_w24b"] && room == "w24b") vars.isRoom = true;
+				if (settings["plant_w24d"] && room == "w24d") vars.isRoom = true;
+				if (settings["plant_w24c"] && room == "w24c") vars.isRoom = true;
+				if (settings["plant_w25a"] && room == "w25a") vars.isRoom = true;
+				if (settings["plant_w25b"] && room == "w25b") vars.isRoom = true;
+				if (settings["plant_w25c"] && room == "w25c") vars.isRoom = true;
+				if (settings["plant_w25d"] && room == "w25d") vars.isRoom = true;
+				if (settings["plant_w28a"] && room == "w28a") vars.isRoom = true;
+				if (settings["plant_w31a"] && room == "w31a") vars.isRoom = true;
+				if (settings["plant_w31b"] && room == "w31b") vars.isRoom = true;
+				if (settings["plant_w31c"] && room == "w31c") vars.isRoom = true;
+				if (settings["plant_w31d"] && room == "w31d") vars.isRoom = true;
+				if (settings["plant_w32a"] && room == "w32a") vars.isRoom = true;
+				if (settings["plant_w32b"] && room == "w32b") vars.isRoom = true;
+				if (settings["plant_w41a"] && room == "w41a") vars.isRoom = true;
+				if (settings["plant_w42a"] && room == "w42a") vars.isRoom = true;
+				if (settings["plant_w43a"] && room == "w43a") vars.isRoom = true;
+				if (settings["plant_w44a"] && room == "w44a") vars.isRoom = true;
+				if (settings["plant_w45a"] && room == "w45a") vars.isRoom = true;
+				if (settings["plant_w46a"] && room == "w46a") vars.isRoom = true;
+				if (settings["plant_w51a"] && room == "w51a") vars.isRoom = true;
+				if (settings["plant_w61a"] && room == "w61a") vars.isRoom = true;
 
 				// Split exceptions for cutscenes
-				switch (room) {
+				switch (room)
+				{
 					case "d005p01": // Elevator scene
 						vars.isRoom = settings["plant_w12a"];
 						break;
 
-					case "d010p01":
-						vars.isRoom = settings["plant_w14a"];
+					case "d010p01": // Meeting pliskin - Doublesplits wtf meng
+						// vars.isRoom = settings["plant_w14a"];
 						break;
 
-					case "d012p01":
+					case "d012p01": // Meeting Fortune
 						vars.isRoom = settings["plant_w15a"];
 						break;
 
-					// Temp fix for manta rays.
-					// case "d080p01":
-					// 	if (!vars.iHateTheRayFightLetsNotSplitOnThisAgain)
-					// 	{
-					// 		vars.iHateTheRayFightLetsNotSplitOnThisAgain = true;
-					// 		vars.isRoom = true;
-					// 	}
+						// Temp fix for manta rays.
+						// case "d080p01":
+						// 	if (!vars.iHateTheRayFightLetsNotSplitOnThisAgain)
+						// 	{
+						// 		vars.iHateTheRayFightLetsNotSplitOnThisAgain = true;
+						// 		vars.isRoom = true;
+						// 	}
 
-					// 	break;
+						// 	break;
 					case "d036p03":
 						if (!vars.amesIsABitch && settings["plant_w25c"])
 						{
@@ -690,9 +756,28 @@ split
 						}
 
 						break;
-				}
 
-				switch (oldRoom) {
+					case "d055p01":
+						if (settings["plant_w31b"])
+						{
+							vars.isRoom = true;
+						}
+
+						break;
+				}
+			}
+			else
+			{
+				switch (oldRoom)
+				{
+					case "d014p01": // After stillman cutscene is finished
+						if (settings["plant_w16b"] && room == "w16b")
+						{
+							vars.isRoom = true;
+						}
+
+						break;
+
 					case "d036p03":
 						if (settings["plant_w24b"] && room == "w24b")
 						{
@@ -702,6 +787,22 @@ split
 						break;
 					case "d078p01":
 						if (settings["plant_w46a"] && room == "w46a")
+						{
+							vars.isRoom = true;
+						}
+
+						break;
+
+					case "d053p01": // Emma leaving vamproom
+						if (settings["plant_w31b"] && room == "w31b")
+						{
+							vars.isRoom = true;
+						}
+
+						break;
+
+					case "d063p01": // Lvl5 card from Emma
+						if (settings["plant_w28a"] && room == "w28a")
 						{
 							vars.isRoom = true;
 						}
@@ -718,142 +819,178 @@ split
 		}
 	}
 
-
-	// START DEBUG
-	if (settings["debug_path"])
+	// if (settings["debug_path"] && room != oldRoom || settings["debug_path"] && tempBoss != "")
+	if (settings["debug_path"] && room != oldRoom || settings["debug_path"] && vars.isBossSplit)
 	{
-		string splitSuccess = "Success";
-		string splitFail = "Failure";
+		string logFormat = "RUN,SPLIT,AREA,TYPE,ENABLED,REASON,MAP_FROM,MAP_FROM_NAME,MAP_TO,MAP_TO_NAME";
+		string firstLine = "";
+
+		bool needsFirstLine = false;
+
+		if (vars.checkFormatLine)
+		{
+			using(StreamReader reader = new StreamReader(vars.fullPath))
+			{
+				firstLine = reader.ReadLine();
+				reader.Close();
+			}
+
+			if (firstLine != logFormat)
+			{
+				needsFirstLine = true;
+			}
+		}
+
+		string logLine = "";
+		bool logSplit = false;
+		string logArea = "";
+		string logType = "room";
+		bool logEnabled = false;
+		string logReason = "";
+		string logFrom = "missing";
+		string logFromName = "";
+		string logTo = "missing";
+		string logToName = "";
 
 		if (vars.isSplitting)
 		{
-			if (tanker.Any (room.Contains))
+			// SPLIT
+			logSplit = true;
+
+			if (tanker.Any(room.Contains))
 			{
-				if (settings["tanker_" + room]) {
-					splitSuccess += "(enabled)";
-				}
-				else if (!settings["tanker_" + room])
+				logArea = "tanker";
+
+				if (vars.isBossSplit)
 				{
-					splitSuccess += "(disable)";
+					logType = "boss";
+					logEnabled = settings["tanker_split_boss"];
+					logReason = tempBoss;
 				} 
 				else
 				{
-					splitSuccess += "(???)";
+					logEnabled = settings["tanker_" + room];
 				}
 			} 
-
-			if (tankerCutscenes.Any (room.Contains))
+			else if (tankerCutscenes.Any(room.Contains))
 			{
-				splitSuccess += "(is tanker cutscene)";
-			} 
-			else if (tankerCutscenes.Any (oldRoom.Contains))
-			{
-				splitSuccess += "(was tanker cutscene)";
+				logArea = "tanker";
+				logType = "cutscene";
 			}
-
-			if (plant.Any (room.Contains))
+			else if (plant.Any(room.Contains))
 			{
-				if (settings["plant_" + room]) {
-					splitSuccess += "(enabled)";
-				}
-				else if (!settings["tanker_" + room])
+				logArea = "plant";
+
+				if (vars.isBossSplit)
 				{
-					splitSuccess += "(disable)";
-				} 
+					logType = "boss";
+					logEnabled = settings["plant_split_boss"];
+					logReason = tempBoss;
+				}
 				else
 				{
-					splitSuccess += "(???)";
+					logEnabled = settings["plant_" + room];
 				}
 			}
-
-			if (plantCutscenes.Any (room.Contains))
+			else if (plantCutscenes.Any(room.Contains))
 			{
-				splitSuccess += "(is plant cutscene)";
-			} 
-			else if (plantCutscenes.Any (oldRoom.Contains))
-			{
-				splitSuccess += "(was plant cutscene)";
+				logArea = "plant";
+				logType = "cutscene";
 			}
 
-			splitSuccess += ": " + oldRoom + " --> " + room;
-
-			using(var sw = new System.IO.StreamWriter(vars.fullPath, true))
+			if (tankerCutscenes.Any(oldRoom.Contains) || plantCutscenes.Any(oldRoom.Contains))
 			{
-				sw.WriteLine(splitSuccess);
-				sw.Close();
+				logReason = "room was cutscene";
 			}
 		}
-
-		if (!vars.isSplitting && room != oldRoom)
+		else if (!vars.isSplitting)
 		{
-			if (tanker.Any (room.Contains))
-			{
-				splitFail += "(tanker)";
+			// SPLIT
+			logSplit = false;
 
-				if (settings["tanker_" + room]) {
-					splitFail += "(enabled)";
-				}
-				else if (!settings["tanker_" + room])
+			if (tanker.Any(room.Contains))
+			{
+				logArea = "tanker";
+
+				if (vars.isBossSplit)
 				{
-					splitFail += "(disable)";
+					logType = "boss";
+					logEnabled = settings["tanker_split_boss"];
+					logReason = tempBoss;
 				} 
 				else
 				{
-					splitFail += "(???)";
+					logEnabled = settings["tanker_" + room];
 				}
-			}
-
-			if (tankerCutscenes.Any (room.Contains))
+			} 
+			else if (tankerCutscenes.Any(room.Contains))
 			{
-				splitFail += "(is tanker cutscene)";
+				logArea = "tanker";
+				logType = "cutscene";
 			}
-			else if (tankerCutscenes.Any (oldRoom.Contains))
+			else if (plant.Any(room.Contains))
 			{
-				splitFail += "(was tanker cutscene)";
-			}
+				logArea = "plant";
 
-
-			if (plant.Any (room.Contains))
-			{
-				splitFail += "(plant)";
-				
-				if (settings["plant_" + room]) {
-					splitFail += "(enabled)";
-				}
-				else if (!settings["tanker_" + room])
+				if (vars.isBossSplit)
 				{
-					splitFail += "(disable)";
-				} 
+					logType = "boss";
+					logEnabled = settings["plant_split_boss"];
+					logReason = tempBoss;
+				}
 				else
 				{
-					splitFail += "(???)";
+					logEnabled = settings["plant_" + room];
 				}
 			}
-
-			if (plantCutscenes.Any (room.Contains))
+			else if (plantCutscenes.Any(room.Contains))
 			{
-				splitFail += "(is plant cutscene)";
-			}
-			else if (plantCutscenes.Any (oldRoom.Contains))
-			{
-				splitFail += "(was plant cutscene)";
+				logArea = "plant";
+				logType = "cutscene";
 			}
 
-			splitFail += ": " + oldRoom + " --> " + room;
-
-			using(var sw = new System.IO.StreamWriter(vars.fullPath, true))
+			if (room == oldRoom)
 			{
-				sw.WriteLine(splitFail);
-				sw.Close();
+				logReason = "room was oldRoom";
+			}
+			else if (tankerCutscenes.Any(oldRoom.Contains) || plantCutscenes.Any(oldRoom.Contains))
+			{
+				logReason = "oldRoom was cutscene";
 			}
 		}
 
+		logFrom = oldRoom;
+		logTo = room;
+
+		if (Array.IndexOf (tanker, oldRoom) != -1) 	logFromName = vars.tankerRoomNames[Array.IndexOf (tanker, oldRoom)];
+		if (Array.IndexOf (tanker, room) != -1) 	logToName = vars.tankerRoomNames[Array.IndexOf (tanker, room)];
+		if (Array.IndexOf (plant, oldRoom) != -1) 	logFromName = vars.plantRoomNames[Array.IndexOf (plant, oldRoom)];
+		if (Array.IndexOf (plant, room) != -1) 		logToName = vars.plantRoomNames[Array.IndexOf (plant, room)];
+
+		if (needsFirstLine) {
+			System.IO.File.WriteAllText(vars.fullPath, string.Empty);
+		}
+
+		using(var sw = new System.IO.StreamWriter(vars.fullPath, true))
+		{
+			if (needsFirstLine) 
+			{
+				sw.WriteLine(logFormat);
+				vars.checkFormatLine = false;
+			}
+			
+			logLine = vars.runNum + "," + logSplit + "," + logArea + "," + logType + "," + logEnabled + "," + logReason + "," + logFrom + ",\"" + logFromName + "\"," + logTo + ",\"" + logToName + "\"";
+			
+			sw.WriteLine(logLine);
+			sw.Close();
+		}
 	}
 	// END DEBUG
 
-	if (vars.isSplitting && !menu.Any(oldRoom.Contains))
+	if (vars.isSplitting && !menu.Any (oldRoom.Contains))
 	{
 		vars.isSplitting = false;
+		if (vars.isBossSplit) vars.isBossSplit = false;
 		return true;
 	}
 }
